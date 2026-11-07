@@ -35,22 +35,29 @@ export function MoodPicker({ value, onChange, label, accent = 'amber' }: Props) 
         </AppText>
       </View>
       <View style={styles.grid} accessibilityRole="radiogroup" accessibilityLabel={label}>
-        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
-          const selected = value === n;
-          return (
-            <Pressable
-              key={n}
-              onPress={() => onChange(selected ? null : n)}
-              accessibilityRole="radio"
-              accessibilityState={{ selected }}
-              accessibilityLabel={`${n}, ${moodWords[n]}`}
-              style={[styles.cell, selected && { backgroundColor: accentColor[accent], borderColor: accentColor[accent] }]}>
-              <AppText variant="label" style={{ color: selected ? colors.onAccent : colors.text }}>
-                {n}
-              </AppText>
-            </Pressable>
-          );
-        })}
+        {[
+          [1, 2, 3, 4, 5],
+          [6, 7, 8, 9, 10],
+        ].map((row) => (
+          <View key={row[0]} style={styles.row}>
+            {row.map((n) => {
+              const selected = value === n;
+              return (
+                <Pressable
+                  key={n}
+                  onPress={() => onChange(selected ? null : n)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={`${n}, ${moodWords[n]}`}
+                  style={[styles.cell, selected && { backgroundColor: accentColor[accent], borderColor: accentColor[accent] }]}>
+                  <AppText variant="label" style={{ color: selected ? colors.onAccent : colors.text }}>
+                    {n}
+                  </AppText>
+                </Pressable>
+              );
+            })}
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -59,10 +66,10 @@ export function MoodPicker({ value, onChange, label, accent = 'amber' }: Props) 
 const styles = StyleSheet.create({
   wrap: { gap: space.sm },
   labelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
+  grid: { gap: space.sm },
+  row: { flexDirection: 'row', gap: space.sm },
   cell: {
-    width: '18%',
-    flexGrow: 1,
+    flex: 1,
     minHeight: 48,
     borderRadius: radius.sm,
     borderWidth: 1,

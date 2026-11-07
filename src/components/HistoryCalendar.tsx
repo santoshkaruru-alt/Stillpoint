@@ -58,7 +58,7 @@ export function HistoryCalendar({ minutes }: { minutes: Map<string, number> }) {
       {weeks.map((week) => (
         <View key={week[0].key} style={styles.row}>
           {week.map((d) => {
-            const mins = minutes.get(d.key) ?? 0;
+            const mins = d.inMonth ? (minutes.get(d.key) ?? 0) : 0;
             const level = mins === 0 ? 0 : mins < 10 ? 1 : mins < 25 ? 2 : 3;
             return (
               <View

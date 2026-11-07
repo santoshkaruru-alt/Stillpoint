@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
@@ -11,6 +12,7 @@ import { Field, Section, ToggleRow } from '@/components/SettingRow';
 import { Screen } from '@/components/Screen';
 import { Stepper } from '@/components/Stepper';
 import type { AmbientBedId } from '@/models/types';
+import { clearAllData } from '@/db';
 import { ensurePermission, syncReminders } from '@/services/notifications';
 import { useSettings, type ReminderSettings } from '@/store/settings';
 import { colors, space } from '@/theme';
@@ -249,6 +251,29 @@ export default function SettingsTab() {
           onChange={(v) => s.set({ dimDuringSession: v })}
         />
       </Section>
+
+      <Section title="Safety and data">
+        <Button label="Safety guidance" icon="exclamationmark.shield" kind="secondary" size="md" onPress={() => router.push('/safety')} />
+        <AppText variant="caption" tone="faint">
+          Everything you write and every session you log stays on this phone. Nothing is uploaded.
+        </AppText>
+        <Button
+          label="Clear history"
+          icon="trash"
+          kind="ghost"
+          size="md"
+          onPress={() =>
+            Alert.alert('Clear all history?', 'This deletes your sessions, breath holds and journal entries. Settings and your intention are kept.', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Clear', style: 'destructive', onPress: clearAllData },
+            ])
+          }
+        />
+      </Section>
+
+      <AppText variant="caption" tone="faint" center>
+        Stillpoint 1.0 · A wellbeing tool, not medical treatment.
+      </AppText>
     </Screen>
   );
 }

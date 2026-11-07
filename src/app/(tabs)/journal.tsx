@@ -50,12 +50,12 @@ export default function JournalTab() {
       </View>
 
       <View style={styles.tiles}>
-        <Tile value={String(data.streak)} label="day streak" sub={`Longest ${data.longest}`} />
+        <Tile value={String(data.streak)} label="day streak" sub={`Best ${data.longest}`} />
         <Tile value={String(data.minutes)} label="minutes" sub={`${data.practices.length} sessions`} />
         <Tile
           value={data.lift === null ? '–' : `${data.lift >= 0 ? '+' : ''}${data.lift.toFixed(1)}`}
           label="mood lift"
-          sub="avg after vs before"
+          sub="per session"
         />
       </View>
 
@@ -96,7 +96,7 @@ function Tile({ value, label, sub }: { value: string; label: string; sub: string
       <AppText variant="caption" tone="muted">
         {label}
       </AppText>
-      <AppText variant="caption" tone="faint" numberOfLines={1}>
+      <AppText variant="caption" tone="faint" numberOfLines={2}>
         {sub}
       </AppText>
     </View>

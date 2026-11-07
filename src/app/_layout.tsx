@@ -42,6 +42,7 @@ export default function RootLayout() {
           <Stack.Screen name="breath/safety" options={{ presentation: 'modal' }} />
           <Stack.Screen name="intention" options={{ presentation: 'modal' }} />
           <Stack.Screen name="journal/new" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="safety" options={{ presentation: 'modal' }} />
         </Stack.Protected>
         <Stack.Protected guard={!acknowledged}>
           <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
