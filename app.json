@@ -12,7 +12,9 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.stillpoint.app",
       "infoPlist": {
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       }
     },
     "plugins": [
@@ -38,10 +40,20 @@
         {
           "color": "#9C8CFF"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "reactCompiler": true
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png",
+      "name": "Stillpoint",
+      "shortName": "Stillpoint",
+      "description": "Guided meditation and breathwork",
+      "themeColor": "#07071A",
+      "backgroundColor": "#07071A"
     }
   }
 }

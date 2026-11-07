@@ -1,12 +1,14 @@
 # Stillpoint
 
-A guided meditation and breathwork app for iPhone. Long-form "change your state"
+A guided meditation and breathwork app. It runs as a **web app** you add to your
+iPhone home screen (no App Store, no Expo Go), and the same code can later be
+built as a native iPhone app. Long-form "change your state"
 sessions take you from settling the body, through slow breathing, body and space
 awareness, the present moment and heart-centred gratitude, to rehearsing your
 future self, then gently back. All scripts, names and sounds are original.
 
 - **Meditate**: 10, 20, 45 and 60 minute sessions, assembled from seven editable
-  segments, spoken by your iPhone's voice over ambient sound
+  segments, spoken by your phone's voice over ambient sound
 - **Intention**: who you are becoming, the feeling, and one future scene, woven into
   the Future Self part of every session
 - **Breathe**: Box, 4-7-8, Coherent, Physiological sigh, Rising breath and Power
@@ -14,15 +16,81 @@ future self, then gently back. All scripts, names and sounds are original.
   retention timer that logs each hold
 - **Journal**: mood before and after, notes, streaks, minutes, a calendar and a
   breath-hold trend chart
-- **Reminders**: optional morning and evening nudges
+- **Reminders** (native app only): optional morning and evening nudges
 - **Safety first**: an acknowledgement on first launch and before intense
   breathwork, and a large Stop button on every breath screen
 
-Everything is stored on your phone. No account, no network, no tracking.
+Everything is stored on your phone, in the browser or the app. No account, no
+server, no tracking.
 
 ---
 
-## Run it on your iPhone (free, no Mac needed)
+
+## Use it on your iPhone: the web app
+
+**Live at:** https://santoshkaruru-alt.github.io/Build-learn-exp/stillpoint/web/
+(once GitHub Pages is on, see below)
+
+1. Open the link in **Safari** on your iPhone.
+2. Tap **Share**, then **Add to Home Screen**, then **Add**.
+3. Open Stillpoint from its home-screen icon. It runs full screen, works
+   offline after the first visit, and keeps your history on the phone.
+
+### Turning on GitHub Pages (once)
+
+The built app is committed in `stillpoint/web/`, so Pages only needs to serve
+the repository:
+
+1. Merge this branch into `main`.
+2. On GitHub: **Settings > Pages > Build and deployment**: Source *Deploy from a
+   branch*, Branch `main`, folder `/ (root)`. Save. (If Penny or Forge are
+   already published, this is already set.)
+3. After a minute or two, open the link above.
+
+### What the web app can and can't do
+
+| | Web app (iPhone Safari) | Native app (later) |
+|---|---|---|
+| Meditations, intention, breathwork, journal | Yes | Yes |
+| Spoken guidance | Yes, with the device's voices | Yes |
+| Ambient sound, binaural tones, cues | Yes | Yes |
+| Works offline, own home-screen icon | Yes | Yes |
+| Haptic breath cues | Limited: Android yes; iPhone may give light taps on iOS 18+, not guaranteed | Yes |
+| Daily reminders | No: browsers can't schedule local notifications | Yes |
+| Keeps going with the screen locked | No: the session pauses; tap Resume | Partly (see below) |
+
+During a session the app keeps the screen awake and dims it (tap to wake).
+If you lock the phone or switch apps, the session pauses itself instead of
+skipping ahead. On iOS 17 and later, sound plays even with the silent switch
+on; on older versions, flip the switch if you hear nothing.
+
+### Updating the web app after you change something
+
+```bash
+cd stillpoint
+npm install            # first time only
+npm run build:web      # rebuilds stillpoint/web
+npm run preview:web    # optional: try it at http://localhost:8090/Build-learn-exp/stillpoint/web/
+git add web && git commit -m "Rebuild web app" && git push
+```
+
+The base path is set for this repository's GitHub Pages address. To host it
+somewhere else, build with `STILLPOINT_BASE_URL=/your/path npm run build:web`
+(or `/` for a site root).
+
+### Developing in the browser
+
+`npx expo start --web` runs the app in your desktop browser with live reload.
+Use your browser's device toolbar for a phone-sized view.
+
+---
+
+## Native iPhone app (optional, later)
+
+The same code builds as a native app with haptics, reminders and better
+background audio. Two ways to run it:
+
+### Try it with Expo Go (free, no Mac needed)
 
 You need: a computer (Windows, Mac or Linux) with [Node.js 20+](https://nodejs.org),
 and your iPhone on the **same Wi-Fi** network.
@@ -49,7 +117,7 @@ Tips:
 - Turn the ringer switch off? Sound still plays: the app opts in to playing in
   silent mode.
 
-### What works in Expo Go, and what needs a real build
+#### What works in Expo Go, and what needs a real build
 
 | | Expo Go (free) | Development or App Store build |
 |---|---|---|
@@ -65,7 +133,7 @@ Tips:
 those if the screen locks. Recorded voice files (see *Voice* below) remove this
 limit.
 
-### Building a standalone app later (EAS)
+### Building a standalone app (EAS)
 
 Installing your own build on an iPhone needs an
 [Apple Developer Program](https://developer.apple.com/programs/) membership
@@ -89,10 +157,13 @@ background-audio settings.
 
 ---
 
+---
+
 ## Editing content (no code needed)
 
 Everything spoken or shown as guidance lives in **`content/`**. Change the text,
-save, and the app reloads.
+save, and the dev app reloads. For the published web app, run
+`npm run build:web` and commit `web/` afterwards.
 
 | File | What it controls |
 |---|---|
@@ -162,19 +233,29 @@ Binaural tones are off by default. Turning them on shows a headphones notice.
 stillpoint/
 ├── content/             Editable scripts, session plans, presets, safety copy
 ├── assets/audio/        Generated sounds (cues, beds, binaural)
-├── scripts/             generate-audio.mjs, export-scripts.ts
+├── scripts/             generate-audio, export-scripts, build-web, preview-web
+├── public/              Web app manifest and icons (copied into the build)
+├── web/                 Built web app (generated by npm run build:web)
 └── src/
     ├── app/             Screens (Expo Router): tabs, players, modals
     ├── engine/          Pure logic, unit-tested: script parsing, templating,
     │                    session assembly, meditation runner, breath timer, stats
     ├── audio/           Audio session, cue sounds, ambient mixer, voice providers
-    ├── db/              SQLite history: practices, journal, breath holds
+    ├── db/              History: SQLite on native, localStorage on web
     ├── store/           Zustand stores (settings, custom patterns), persisted
     ├── services/        Haptics, notifications
     ├── components/      UI building blocks
     ├── models/types.ts  Session, Segment, BreathPattern, JournalEntry, ...
     └── theme/           Colours, type scale, spacing
 ```
+
+Web and native share all screens and logic. Where a platform needs something
+different, a `*.web.ts(x)` file sits next to the native one and the bundler
+picks the right one: storage (`db/index.web.ts`, `store/kv.web.ts`), audio
+(`audio/ambient.web.ts`, `cues.web.ts`, built on Web Audio because iPhone
+browsers ignore volume changes on normal audio elements), icons
+(`components/Icon.web.tsx`), the tab bar (`AppTabs.web.tsx`) and reminders
+(stubbed on web).
 
 How a meditation plays:
 
@@ -191,7 +272,9 @@ How a meditation plays:
 ## Scripts
 
 ```bash
-npm start               # Expo dev server (scan with Expo Go)
+npm run build:web       # build the web app into ./web
+npm run preview:web     # serve ./web locally at the GitHub Pages path
+npm start               # Expo dev server (Expo Go, or press w for web)
 npm test                # unit tests (assembly, runner, breath timer, stats)
 npm run typecheck       # TypeScript
 npm run generate:audio  # rebuild assets/audio
@@ -200,13 +283,14 @@ npm run export:scripts  # export spoken lines for a voice pack
 
 ## Accessibility
 
-- Text follows the iPhone *Text Size* setting (large titles cap their growth so
-  layouts hold).
+- Native: text follows the iPhone *Text Size* setting (large titles cap their
+  growth so layouts hold). Web: pinch-zoom and Safari's text size work.
 - VoiceOver labels on every control. Breath phases are announced. Steppers are
   adjustable (swipe up or down). The hold chart has a list view.
 - *Reduce motion* (System, On, Off): the breathing orb stays still and shows a
   progress ring instead, and glows stop pulsing.
-- Haptics let you follow breathwork with your eyes closed.
+- Haptics let you follow breathwork with your eyes closed (reliable in the
+  native app; limited in iPhone browsers, so keep Sound cues on there).
 
 ## Not built yet (and how it would fit)
 

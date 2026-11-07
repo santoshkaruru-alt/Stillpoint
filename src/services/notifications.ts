@@ -2,6 +2,8 @@ import * as Notifications from 'expo-notifications';
 
 import type { ReminderSettings } from '@/store/settings';
 
+export const remindersSupported = true;
+
 const MORNING_ID = 'stillpoint-morning';
 const EVENING_ID = 'stillpoint-evening';
 

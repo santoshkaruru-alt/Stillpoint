@@ -1,7 +1,6 @@
-import { useKeepAwake } from 'expo-keep-awake';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, Pressable, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, AppState, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -21,6 +20,8 @@ import { assembleSession } from '@/engine/assemble';
 import { formatClock } from '@/engine/breath';
 import { MeditationRunner, type RunnerEvent } from '@/engine/meditation';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { useScreenAwake } from '@/hooks/useScreenAwake';
+import { isWeb } from '@/lib/platformSetup';
 import type { Session, SessionLength } from '@/models/types';
 import { useSettings } from '@/store/settings';
 import { colors, radius, space } from '@/theme';
@@ -56,7 +57,7 @@ export default function MeditationPlayer() {
 }
 
 function Player({ session, fromSegment, moodBefore }: { session: Session; fromSegment: number; moodBefore?: string }) {
-  useKeepAwake();
+  useScreenAwake('meditation');
   const reduceMotion = useReduceMotion();
   const showCaptions = useSettings((s) => s.showCaptions);
   const dimEnabled = useSettings((s) => s.dimDuringSession);
@@ -178,6 +179,22 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Browsers stop audio and timers when the phone locks or the tab is
+  // hidden, so pause cleanly and let the user resume.
+  useEffect(() => {
+    if (!isWeb) return;
+    const sub = AppState.addEventListener('change', (state) => {
+      const st = runner.currentStatus;
+      if (state !== 'active' && !runner.isPaused && st !== 'idle' && st !== 'finished') {
+        runner.pause(Date.now());
+        voiceRef.current?.pause();
+        mixerRef.current?.pause();
+        setPaused(true);
+      }
+    });
+    return () => sub.remove();
+  }, [runner]);
 
   const touch = () => {
     lastTouch.current = Date.now();

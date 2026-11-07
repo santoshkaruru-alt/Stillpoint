@@ -42,3 +42,6 @@ example
 /ios
 /android
 exports/
+
+# Built web app (committed for GitHub Pages) includes router images here
+!/web/assets/node_modules/

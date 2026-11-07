@@ -1,7 +1,6 @@
-import { useKeepAwake } from 'expo-keep-awake';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { AccessibilityInfo, AppState, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { playCue, preloadCues } from '@/audio/cues';
@@ -19,6 +18,8 @@ import {
   type BreathSnapshot,
 } from '@/engine/breath';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { useScreenAwake } from '@/hooks/useScreenAwake';
+import { isWeb } from '@/lib/platformSetup';
 import type { BreathPattern } from '@/models/types';
 import { doneHaptic, phaseHaptic, tickHaptic } from '@/services/haptics';
 import { findPattern } from '@/store/customPatterns';
@@ -39,7 +40,7 @@ function resolvePattern(id: string, breaths?: string): BreathPattern | undefined
 }
 
 export default function BreathPlayer() {
-  useKeepAwake();
+  useScreenAwake('breath');
   const { pattern: patternId, breaths } = useLocalSearchParams<{ pattern: string; breaths?: string }>();
   const pattern = useMemo(() => resolvePattern(patternId, breaths), [patternId, breaths]);
 
@@ -177,6 +178,19 @@ function Player({ pattern }: { pattern: BreathPattern }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steps]);
+
+  // In a browser, timers stop when the phone locks: pause instead of drifting.
+  useEffect(() => {
+    if (!isWeb || !runner) return;
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state !== 'active' && !runner.isFinished) {
+        const now = Date.now();
+        runner.pause(now);
+        setSnap(runner.tick(now));
+      }
+    });
+    return () => sub.remove();
+  }, [runner]);
 
   if (!snap || !runner) return <View style={styles.root} />;
 

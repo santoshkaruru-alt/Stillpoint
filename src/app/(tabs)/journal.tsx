@@ -51,7 +51,7 @@ export default function JournalTab() {
 
       <View style={styles.tiles}>
         <Tile value={String(data.streak)} label="day streak" sub={`Best ${data.longest}`} />
-        <Tile value={String(data.minutes)} label="minutes" sub={`${data.practices.length} sessions`} />
+        <Tile value={String(data.minutes)} label="minutes" sub={`${data.practices.length} ${data.practices.length === 1 ? 'session' : 'sessions'}`} />
         <Tile
           value={data.lift === null ? '–' : `${data.lift >= 0 ? '+' : ''}${data.lift.toFixed(1)}`}
           label="mood lift"

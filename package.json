@@ -5,6 +5,7 @@
   "dependencies": {
     "@expo/ui": "~58.0.27",
     "expo": "~58.0.23",
+    "expo-asset": "~58.0.20",
     "expo-audio": "~58.0.11",
     "expo-constants": "~58.0.15",
     "expo-device": "~58.0.5",
@@ -50,7 +51,9 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "generate:audio": "node scripts/generate-audio.mjs",
-    "export:scripts": "tsx scripts/export-scripts.ts"
+    "export:scripts": "tsx scripts/export-scripts.ts",
+    "build:web": "node scripts/build-web.mjs",
+    "preview:web": "node scripts/preview-web.mjs"
   },
   "private": true,
   "jest": {
@@ -60,7 +63,8 @@
       "^@/(.*)$": "<rootDir>/src/$1"
     },
     "testPathIgnorePatterns": [
-      "/node_modules/"
+      "/node_modules/",
+      "<rootDir>/web/"
     ]
   }
 }

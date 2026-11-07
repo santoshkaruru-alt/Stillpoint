@@ -13,7 +13,8 @@ import { Screen } from '@/components/Screen';
 import { Stepper } from '@/components/Stepper';
 import type { AmbientBedId } from '@/models/types';
 import { clearAllData } from '@/db';
-import { ensurePermission, syncReminders } from '@/services/notifications';
+import { isWeb } from '@/lib/platformSetup';
+import { ensurePermission, remindersSupported, syncReminders } from '@/services/notifications';
 import { useSettings, type ReminderSettings } from '@/store/settings';
 import { colors, space } from '@/theme';
 
@@ -80,6 +81,7 @@ export default function SettingsTab() {
         </AppText>
       </View>
 
+      {remindersSupported ? (
       <Section title="Reminders">
         <ToggleRow label="Morning reminder" value={r.morningEnabled} onChange={(v) => void updateReminders({ morningEnabled: v })} />
         {r.morningEnabled ? (
@@ -106,6 +108,7 @@ export default function SettingsTab() {
           />
         ) : null}
       </Section>
+      ) : null}
 
       <Section title="Voice">
         <Stepper
@@ -156,7 +159,9 @@ export default function SettingsTab() {
         {showVoices ? (
           <View style={styles.voiceList}>
             <AppText variant="caption" tone="faint">
-              For a more natural voice, download an Enhanced or Premium voice in iPhone Settings, Accessibility, Spoken Content, Voices. Then choose it here.
+              {isWeb
+                ? 'Voices come from your device. On iPhone, Enhanced voices downloaded in Settings, Accessibility, Spoken Content, Voices can appear here too.'
+                : 'For a more natural voice, download an Enhanced or Premium voice in iPhone Settings, Accessibility, Spoken Content, Voices. Then choose it here.'}
             </AppText>
             {[{ id: '', name: 'System default', quality: '' }, ...voices].map((v) => {
               const selected = (s.voiceId ?? '') === v.id;
@@ -228,7 +233,10 @@ export default function SettingsTab() {
       </Section>
 
       <Section title="Breathwork">
-        <ToggleRow label="Haptics" hint="Feel each phase of the breath" value={s.hapticsEnabled} onChange={(v) => s.set({ hapticsEnabled: v })} />
+        <ToggleRow
+          label="Haptics"
+          hint={isWeb ? 'Works in Android browsers. iPhone browsers allow only light taps on iOS 18 or later, and not always. Keep Sound cues on.' : 'Feel each phase of the breath'}
+          value={s.hapticsEnabled} onChange={(v) => s.set({ hapticsEnabled: v })} />
         <ToggleRow label="Sound cues" hint="Soft tones at each phase" value={s.breathSounds} onChange={(v) => s.set({ breathSounds: v })} />
       </Section>
 
