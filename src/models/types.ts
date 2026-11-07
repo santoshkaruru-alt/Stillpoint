@@ -25,7 +25,7 @@ export type SegmentId =
 /** Each segment script exists in three lengths. */
 export type ScriptVariant = 'short' | 'medium' | 'long';
 
-export type AmbientBedId = 'none' | 'drift' | 'tide' | 'hearth' | 'night';
+export type AmbientBedId = 'none' | 'drift' | 'tide' | 'rain' | 'deep';
 export type BinauralPresetId = 'off' | 'alpha' | 'theta' | 'delta';
 
 export interface AmbientSettings {

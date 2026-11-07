@@ -2,9 +2,16 @@ import { router } from 'expo-router';
 
 import { useSettings } from '@/store/settings';
 
-/** Start a meditation of the given length (optionally from a segment). */
-export function startMeditation(lengthMin: number, fromSegment = 0) {
-  router.push({ pathname: '/session/[length]', params: { length: String(lengthMin), from: String(fromSegment) } });
+/** Start a meditation of the given length (optionally from a segment, with a mood check-in). */
+export function startMeditation(lengthMin: number, fromSegment = 0, moodBefore: number | null = null) {
+  router.push({
+    pathname: '/session/[length]',
+    params: {
+      length: String(lengthMin),
+      from: String(fromSegment),
+      ...(moodBefore ? { mood: String(moodBefore) } : {}),
+    },
+  });
 }
 
 /**
