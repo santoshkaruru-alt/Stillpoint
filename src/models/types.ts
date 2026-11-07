@@ -125,6 +125,8 @@ export interface BreathPhase {
   sec: number;
   /** Optional instruction shown during this phase. */
   cue?: string;
+  /** Override the circle size at the end of this phase (0..1). */
+  scaleTo?: number;
 }
 
 interface BreathPatternBase {

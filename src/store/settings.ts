@@ -1,7 +1,7 @@
-import Storage from 'expo-sqlite/kv-store';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
+import { kvStorage } from './kv';
 import type { AmbientBedId, Intention, SessionLength } from '@/models/types';
 
 export type ReduceMotionPref = 'system' | 'on' | 'off';
@@ -96,13 +96,7 @@ export const useSettings = create<SettingsState>()(
       version: 1,
       // Synchronous storage so settings are ready on the first render
       // (no flash of the safety screen for returning users).
-      storage: createJSONStorage(() => ({
-        getItem: (key) => Storage.getItemSync(key),
-        setItem: (key, value) => Storage.setItemSync(key, value),
-        removeItem: (key) => {
-          Storage.removeItemSync(key);
-        },
-      })),
+      storage: kvStorage,
       partialize: ({ set: _set, ...rest }) => rest,
     },
   ),
