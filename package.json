@@ -41,6 +41,7 @@
     "@types/react": "~19.3.0",
     "jest": "^30.5.2",
     "jest-expo": "^58.0.14",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -49,7 +50,7 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "generate:audio": "node scripts/generate-audio.mjs",
-    "export:scripts": "node scripts/export-scripts.mjs"
+    "export:scripts": "tsx scripts/export-scripts.ts"
   },
   "private": true,
   "jest": {
