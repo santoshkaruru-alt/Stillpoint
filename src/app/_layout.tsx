@@ -3,10 +3,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { configureNotifications } from '@/services/notifications';
 import { useSettings } from '@/store/settings';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
+configureNotifications();
 
 const navTheme = {
   ...DarkTheme,

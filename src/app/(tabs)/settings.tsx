@@ -11,10 +11,16 @@ import { Field, Section, ToggleRow } from '@/components/SettingRow';
 import { Screen } from '@/components/Screen';
 import { Stepper } from '@/components/Stepper';
 import type { AmbientBedId } from '@/models/types';
-import { useSettings } from '@/store/settings';
+import { ensurePermission, syncReminders } from '@/services/notifications';
+import { useSettings, type ReminderSettings } from '@/store/settings';
 import { colors, space } from '@/theme';
 
 const pct = (v: number) => `${Math.round(v * 100)}%`;
+
+function formatTime(mins: number): string {
+  const d = new Date(2000, 0, 1, Math.floor(mins / 60), mins % 60);
+  return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+}
 
 export default function SettingsTab() {
   const s = useSettings();
@@ -44,6 +50,23 @@ export default function SettingsTab() {
     s.set({ binauralEnabled: on });
   };
 
+  const updateReminders = async (patch: Partial<ReminderSettings>) => {
+    const next = { ...s.reminders, ...patch };
+    const turningOn = (patch.morningEnabled && !s.reminders.morningEnabled) || (patch.eveningEnabled && !s.reminders.eveningEnabled);
+    if (turningOn && !(await ensurePermission())) {
+      Alert.alert('Notifications are off', 'To get reminders, allow notifications for this app in the iPhone Settings app.');
+      return;
+    }
+    s.set({ reminders: next });
+    try {
+      await syncReminders(next);
+    } catch (e) {
+      console.warn('Could not schedule reminders', e);
+    }
+  };
+
+  const r = s.reminders;
+
   return (
     <Screen>
       <View style={styles.header}>
@@ -54,6 +77,33 @@ export default function SettingsTab() {
           Make it yours
         </AppText>
       </View>
+
+      <Section title="Reminders">
+        <ToggleRow label="Morning reminder" value={r.morningEnabled} onChange={(v) => void updateReminders({ morningEnabled: v })} />
+        {r.morningEnabled ? (
+          <Stepper
+            label="Morning time"
+            value={r.morningHour * 60 + r.morningMinute}
+            onChange={(v) => void updateReminders({ morningHour: Math.floor(v / 60), morningMinute: v % 60 })}
+            min={4 * 60}
+            max={12 * 60}
+            step={15}
+            format={formatTime}
+          />
+        ) : null}
+        <ToggleRow label="Evening reminder" value={r.eveningEnabled} onChange={(v) => void updateReminders({ eveningEnabled: v })} />
+        {r.eveningEnabled ? (
+          <Stepper
+            label="Evening time"
+            value={r.eveningHour * 60 + r.eveningMinute}
+            onChange={(v) => void updateReminders({ eveningHour: Math.floor(v / 60), eveningMinute: v % 60 })}
+            min={16 * 60}
+            max={23 * 60 + 45}
+            step={15}
+            format={formatTime}
+          />
+        ) : null}
+      </Section>
 
       <Section title="Voice">
         <Stepper
