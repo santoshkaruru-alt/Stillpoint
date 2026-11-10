@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Serves the built web app (./web) at the same path GitHub Pages uses, so
+ * Serves the built web app (./docs) at the same path GitHub Pages uses, so
  * you can try it before publishing:   npm run build:web && npm run preview:web
  * Then open the printed URL. On a phone on the same Wi-Fi, use your
  * computer's IP address instead of localhost (offline mode and "Add to
@@ -11,8 +11,8 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'web');
-const base = (process.env.STILLPOINT_BASE_URL ?? '/Build-learn-exp/stillpoint/web').replace(/\/$/, '');
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
+const base = (process.env.STILLPOINT_BASE_URL ?? '/stillpoint').replace(/\/$/, '');
 const port = Number(process.env.PORT ?? 8090);
 const types = {
   '.html': 'text/html; charset=utf-8',

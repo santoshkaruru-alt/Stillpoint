@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Builds Stillpoint as an installable web app (PWA) into ./web
+ * Builds Stillpoint as an installable web app (PWA) into ./docs
  *
  *   npm run build:web
  *
- * The default base path suits GitHub Pages for this repository:
- *   https://<user>.github.io/Build-learn-exp/stillpoint/web/
+ * GitHub Pages serves ./docs from main, so the default base path is the
+ * repository name:  https://<user>.github.io/stillpoint/
  * Host it elsewhere by setting STILLPOINT_BASE_URL, e.g.
  *   STILLPOINT_BASE_URL=/ npm run build:web        (site root)
  *
@@ -19,13 +19,13 @@ import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const out = join(root, 'web');
-const base = (process.env.STILLPOINT_BASE_URL ?? '/Build-learn-exp/stillpoint/web').replace(/\/$/, '');
+const out = join(root, 'docs');
+const base = (process.env.STILLPOINT_BASE_URL ?? '/stillpoint').replace(/\/$/, '');
 const prefix = `${base}/`;
 
 console.log(`Building web app for ${prefix}`);
 rmSync(out, { recursive: true, force: true });
-const res = spawnSync('npx', ['expo', 'export', '--platform', 'web', '--output-dir', 'web'], {
+const res = spawnSync('npx', ['expo', 'export', '--platform', 'web', '--output-dir', 'docs'], {
   cwd: root,
   stdio: 'inherit',
   env: { ...process.env, STILLPOINT_BASE_URL: base || '/' },
@@ -79,7 +79,7 @@ function walk(dir) {
 
 const files = walk(out)
   .map((p) => relative(out, p).split(sep).join('/'))
-  .filter((f) => f !== 'metadata.json' && f !== 'sw.js');
+  .filter((f) => f !== 'metadata.json' && f !== 'sw.js' && f !== '.nojekyll');
 
 const hash = createHash('sha256');
 for (const f of files.sort()) hash.update(f).update(readFileSync(join(out, f)));
@@ -139,7 +139,9 @@ self.addEventListener('fetch', (event) => {
 });
 `;
 writeFileSync(join(out, 'sw.js'), sw);
+// GitHub Pages runs Jekyll by default, which would hide the _expo folder.
+writeFileSync(join(out, '.nojekyll'), '');
 
 const size = files.reduce((s, f) => s + statSync(join(out, f)).size, 0);
-console.log(`\nWeb app ready in ./web (${(size / 1024 / 1024).toFixed(1)} MB, ${precache.length} files precached, version ${version})`);
+console.log(`\nWeb app ready in ./docs (${(size / 1024 / 1024).toFixed(1)} MB, ${precache.length} files precached, version ${version})`);
 console.log(`Preview locally: npm run preview:web`);
