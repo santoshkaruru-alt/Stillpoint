@@ -9,17 +9,19 @@ import { MoodPicker } from '@/components/MoodPicker';
 import { Screen } from '@/components/Screen';
 import { getPractice, newId, saveJournal } from '@/db';
 import { formatClock } from '@/engine/breath';
-import { colors, radius, space, type } from '@/theme';
+import { makeStyles, radius, space, type, useTheme } from '@/theme';
 
 /**
  * After a meditation or breathwork session: mood check-in and a short note.
  * Both are optional; "Done" without input saves nothing extra.
  */
 export default function Complete() {
+  const styles = useStyles();
+  const { c } = useTheme();
   const params = useLocalSearchParams<{ practiceId?: string; kind?: string; title?: string; moodBefore?: string }>();
   const practice = params.practiceId ? getPractice(params.practiceId) : null;
   const moodBefore = params.moodBefore ? Number(params.moodBefore) : null;
-  const accent = params.kind === 'breath' ? 'teal' : 'violet';
+  const accent = params.kind === 'breath' ? 'breath' : 'calm';
 
   const [moodAfter, setMoodAfter] = useState<number | null>(null);
   const [note, setNote] = useState('');
@@ -62,7 +64,7 @@ export default function Complete() {
           value={note}
           onChangeText={setNote}
           placeholder="A few words about this session (optional)"
-          placeholderTextColor={colors.textFaint}
+          placeholderTextColor={c.textFaint}
           multiline
           style={styles.input}
           accessibilityLabel="Session note"
@@ -75,19 +77,21 @@ export default function Complete() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  flex: { flex: 1, backgroundColor: c.bg },
   header: { gap: space.sm, paddingTop: space.lg },
   card: { gap: space.md },
   input: {
     ...type.body,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    color: c.text,
+    backgroundColor: c.surface,
+    borderColor: c.line,
     borderWidth: 1,
     borderRadius: radius.md,
     padding: space.md,
     minHeight: 120,
     textAlignVertical: 'top',
   },
-});
+  }),
+);

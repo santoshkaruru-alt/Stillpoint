@@ -13,6 +13,7 @@ import { DeviceTTSProvider } from '@/audio/voice/DeviceTTSProvider';
 import type { VoiceProvider } from '@/audio/voice/VoiceProvider';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
+import { Enso } from '@/components/Enso';
 import { GlowBackground } from '@/components/GlowBackground';
 import { Icon } from '@/components/Icon';
 import { newId, savePractice } from '@/db';
@@ -24,7 +25,7 @@ import { useScreenAwake } from '@/hooks/useScreenAwake';
 import { isWeb } from '@/lib/platformSetup';
 import type { Session, SessionLength } from '@/models/types';
 import { useSettings } from '@/store/settings';
-import { colors, radius, space } from '@/theme';
+import { makeStyles, radius, space, useTheme, withAlpha } from '@/theme';
 
 const TICK_MS = 250;
 const DIM_AFTER_MS = 20_000;
@@ -32,6 +33,7 @@ const END_FADE_MS = 8000;
 const MIN_LOG_SEC = 60;
 
 export default function MeditationPlayer() {
+  const styles = useStyles();
   const params = useLocalSearchParams<{ length: string; from?: string; mood?: string }>();
   const lengthMin = Number(params.length) as SessionLength;
   const plan = planFor(lengthMin);
@@ -57,6 +59,8 @@ export default function MeditationPlayer() {
 }
 
 function Player({ session, fromSegment, moodBefore }: { session: Session; fromSegment: number; moodBefore?: string }) {
+  const styles = useStyles();
+  const { c } = useTheme();
   useScreenAwake('meditation');
   const reduceMotion = useReduceMotion();
   const showCaptions = useSettings((s) => s.showCaptions);
@@ -233,7 +237,7 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
 
   return (
     <Pressable style={styles.root} onPress={touch} accessible={false}>
-      <GlowBackground accent="violet" glowY={0.38} pulse={!paused} />
+      <GlowBackground accent="calm" glowY={0.36} glowX={0.5} pulse={!paused} ripples={false} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.top}>
           <Pressable
@@ -242,9 +246,9 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
             accessibilityLabel="End session"
             hitSlop={12}
             style={styles.close}>
-            <Icon name="xmark" size={18} color={colors.textMuted} />
+            <Icon name="xmark" size={18} color={c.textSoft} />
           </Pressable>
-          <AppText variant="overline" tone="violet">
+          <AppText variant="overline" tone="calm">
             {session.name} · {session.lengthMin} min
           </AppText>
           <View style={styles.close} />
@@ -253,18 +257,23 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
         <SegmentBar session={session} index={segIndex} />
 
         <View style={styles.center}>
-          <AppText variant="caption" tone="faint" center>
-            {segIndex + 1} of {session.segments.length}
-          </AppText>
-          <AppText variant="display" center accessibilityRole="header">
-            {ending ? 'Welcome back' : seg.title}
-          </AppText>
-          <AppText tone="muted" center>
-            {ending ? 'Let the sound fade' : paused ? 'Paused' : seg.subtitle}
-          </AppText>
+          <View style={styles.titleBlock}>
+            <View style={styles.ensoWrap} pointerEvents="none">
+              <Enso size={300} color={c.text} opacity={c.scheme === 'dark' ? 0.16 : 0.13} drift={!paused} />
+            </View>
+            <AppText variant="overline" tone="faint" center>
+              {segIndex + 1} of {session.segments.length}
+            </AppText>
+            <AppText variant="display" center accessibilityRole="header">
+              {ending ? 'Welcome back' : seg.title}
+            </AppText>
+            <AppText tone="muted" center>
+              {ending ? 'Let the sound fade' : paused ? 'Paused' : seg.subtitle}
+            </AppText>
+          </View>
           {showCaptions && caption && !ending ? (
             <Animated.View entering={reduceMotion ? undefined : FadeIn.duration(600)} exiting={reduceMotion ? undefined : FadeOut.duration(600)} key={caption} style={styles.caption}>
-              <AppText variant="heading" center style={styles.captionText}>
+              <AppText variant="quote" tone="muted" center style={styles.captionText}>
                 {caption}
               </AppText>
             </Animated.View>
@@ -274,7 +283,7 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
         <View style={styles.bottom}>
           {binauralOn ? (
             <View style={styles.notice} accessible accessibilityLabel="Binaural tones are on. Use headphones.">
-              <Icon name="headphones" size={16} color={colors.textMuted} />
+              <Icon name="headphones" size={16} color={c.textSoft} />
               <AppText variant="caption" tone="muted">
                 Binaural tones on. Use headphones.
               </AppText>
@@ -309,6 +318,8 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
 }
 
 function SegmentBar({ session, index }: { session: Session; index: number }) {
+  const styles = useStyles();
+  const { c } = useTheme();
   return (
     <View style={styles.bar} accessible accessibilityLabel={`Part ${index + 1} of ${session.segments.length}: ${session.segments[index].title}`}>
       {session.segments.map((s, i) => (
@@ -317,8 +328,8 @@ function SegmentBar({ session, index }: { session: Session; index: number }) {
           style={[
             styles.barPart,
             { flex: s.plannedSec },
-            i < index && { backgroundColor: colors.violetDeep },
-            i === index && { backgroundColor: colors.violet },
+            i < index && { backgroundColor: withAlpha(c.calm, 0.45) },
+            i === index && { backgroundColor: c.calm },
           ]}
         />
       ))}
@@ -326,17 +337,20 @@ function SegmentBar({ session, index }: { session: Session; index: number }) {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   safe: { flex: 1, paddingHorizontal: space.lg, paddingBottom: space.md, gap: space.md },
   flex: { flex: 1 },
   top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: space.sm },
   close: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   bar: { flexDirection: 'row', gap: 4, height: 4 },
-  barPart: { height: 4, borderRadius: 2, backgroundColor: colors.border },
+  barPart: { height: 3, borderRadius: 2, backgroundColor: c.line },
   center: { flex: 1, justifyContent: 'center', gap: space.sm },
   caption: { marginTop: space.xl, minHeight: 120, justifyContent: 'flex-start' },
-  captionText: { color: colors.textMuted, fontWeight: '300' },
+  captionText: { maxWidth: 360, alignSelf: 'center' },
+  titleBlock: { gap: space.sm, alignItems: 'center', justifyContent: 'center', minHeight: 300 },
+  ensoWrap: { position: 'absolute', top: '50%', left: '50%', marginTop: -150, marginLeft: -150 },
   bottom: { gap: space.md },
   controls: { flexDirection: 'row', gap: space.md },
   notice: {
@@ -348,12 +362,13 @@ const styles = StyleSheet.create({
     paddingVertical: space.xs,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: c.line,
   },
   dim: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(2, 2, 10, 0.88)',
+    backgroundColor: c.scrim,
     justifyContent: 'flex-end',
     paddingBottom: space.xxl * 2,
   },
-});
+  }),
+);

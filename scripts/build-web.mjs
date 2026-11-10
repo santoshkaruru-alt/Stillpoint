@@ -65,7 +65,8 @@ const head = `${caseGuard}
     <meta name="apple-mobile-web-app-title" content="Stillpoint" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <style>
-      html, body { background: #07071A; color-scheme: dark; }
+      html, body { background: #F2F0E9; color-scheme: light dark; }
+      @media (prefers-color-scheme: dark) { html, body { background: #111411; } }
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
     </style>

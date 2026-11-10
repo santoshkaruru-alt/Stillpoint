@@ -4,14 +4,10 @@ import Svg, { Circle, Line, Path, Text as SvgText } from 'react-native-svg';
 
 import type { HoldPoint } from '@/engine/stats';
 import { formatClock } from '@/engine/breath';
-import { colors, space } from '@/theme';
+import { fonts, space, useTheme } from '@/theme';
 
 import { AppText } from './AppText';
 
-/** Validated against the dark surface (L 0.48 to 0.67 band, contrast >= 3:1). */
-const SERIES = '#2FA898';
-const GRID = 'rgba(196, 190, 255, 0.10)';
-const SURFACE = '#151638';
 
 const H = 180;
 const PAD = { top: 22, right: 16, bottom: 22, left: 40 };
@@ -28,6 +24,11 @@ const shortDate = (ts: number) => new Date(ts).toLocaleDateString(undefined, { m
  * names it. Tap a point to read it; "Show as list" gives a table view.
  */
 export function HoldChart({ points, width }: { points: HoldPoint[]; width: number }) {
+  const { c } = useTheme();
+  // Series colour is per palette, validated against the card (3:1+).
+  const SERIES = c.chart;
+  const GRID = c.line;
+  const SURFACE = c.cardSolid;
   const [selected, setSelected] = useState<number | null>(null);
   const [asList, setAsList] = useState(false);
 
@@ -79,14 +80,14 @@ export function HoldChart({ points, width }: { points: HoldPoint[]; width: numbe
               <Line key={t} x1={PAD.left} x2={width - PAD.right} y1={y(t)} y2={y(t)} stroke={GRID} strokeWidth={1} />
             ))}
             {ticks.map((t) => (
-              <SvgText key={`l${t}`} x={PAD.left - 8} y={y(t) + 4} fontSize={11} fill={colors.textFaint} textAnchor="end">
+              <SvgText key={`l${t}`} x={PAD.left - 8} y={y(t) + 4} fontSize={11} fontFamily={fonts.sans} fill={c.textFaint} textAnchor="end">
                 {formatClock(t)}
               </SvgText>
             ))}
             <Path d={area} fill={SERIES} fillOpacity={0.1} />
             <Path d={line} stroke={SERIES} strokeWidth={2} fill="none" strokeLinejoin="round" strokeLinecap="round" />
             {active !== null ? (
-              <Line x1={x(active)} x2={x(active)} y1={PAD.top} y2={y(0)} stroke={colors.borderStrong} strokeWidth={1} />
+              <Line x1={x(active)} x2={x(active)} y1={PAD.top} y2={y(0)} stroke={c.lineStrong} strokeWidth={1} />
             ) : null}
             {points.map((p, i) => (
               <Circle key={p.practiceId} cx={x(i)} cy={y(p.best)} r={i === active ? 6 : 4} fill={SERIES} stroke={SURFACE} strokeWidth={2} />
@@ -98,8 +99,8 @@ export function HoldChart({ points, width }: { points: HoldPoint[]; width: numbe
                   x={x(i)}
                   y={y(p.best) - 10}
                   fontSize={12}
-                  fontWeight="600"
-                  fill={colors.textMuted}
+                  fontFamily={fonts.sansSemi}
+                  fill={c.textSoft}
                   textAnchor={i === lastIdx && points.length > 1 ? 'end' : 'middle'}>
                   {i === bestIdx && i !== lastIdx ? `Best ${formatClock(p.best)}` : formatClock(p.best)}
                 </SvgText>
@@ -130,7 +131,7 @@ export function HoldChart({ points, width }: { points: HoldPoint[]; width: numbe
             : `Last ${points.length} sessions. Tap a point for details.`}
         </AppText>
         <Pressable onPress={() => setAsList((v) => !v)} accessibilityRole="button" hitSlop={10}>
-          <AppText variant="caption" tone="violet">
+          <AppText variant="caption" tone="calm">
             {asList ? 'Show chart' : 'Show as list'}
           </AppText>
         </Pressable>

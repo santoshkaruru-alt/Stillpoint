@@ -3,14 +3,14 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { breathPresets } from '@content/breathPresets';
 import { AppText } from '@/components/AppText';
-import { PathCard } from '@/components/Card';
+import { CardGroup, PathCard } from '@/components/Card';
 import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { buildBreathSteps, estimateDurationSec } from '@/engine/breath';
 import { startBreath } from '@/lib/navigation';
 import type { BreathPattern } from '@/models/types';
 import { useCustomPatterns } from '@/store/customPatterns';
-import { colors, space } from '@/theme';
+import { space, useTheme } from '@/theme';
 
 const icons: Record<string, Parameters<typeof Icon>[0]['name']> = {
   box: 'square',
@@ -29,11 +29,12 @@ function minutesLabel(p: BreathPattern): string {
 
 export default function BreatheTab() {
   const custom = useCustomPatterns((s) => s.patterns);
+  const { c } = useTheme();
 
   return (
-    <Screen accent="teal">
+    <Screen accent="breath" glowY={0.08}>
       <View style={styles.header}>
-        <AppText variant="overline" tone="teal">
+        <AppText variant="overline" tone="breath">
           Breathe
         </AppText>
         <AppText variant="display" accessibilityRole="header">
@@ -41,34 +42,36 @@ export default function BreatheTab() {
         </AppText>
       </View>
 
-      <View style={styles.list}>
+      <CardGroup>
         {breathPresets.map((p) => (
           <PathCard
             key={p.id}
+            bare
             title={p.name}
             subtitle={`${p.summary} ${minutesLabel(p)}`}
             icon={icons[p.id] ?? 'wind'}
-            accent="teal"
+            accent="breath"
             onPress={() => startBreath(p.id, p.requiresSafetyCheck)}
             accessibilityHint={p.requiresSafetyCheck ? 'Opens a safety check, then starts' : 'Starts now'}
-            right={p.requiresSafetyCheck ? <Icon name="exclamationmark.shield" size={20} color={colors.amber} /> : undefined}
+            right={p.requiresSafetyCheck ? <Icon name="exclamationmark.shield" size={20} color={c.warm} /> : undefined}
           />
         ))}
-      </View>
+      </CardGroup>
 
       <View style={styles.sectionHeader}>
-        <AppText variant="heading" accessibilityRole="header">
+        <AppText variant="overline" tone="faint" accessibilityRole="header">
           Your patterns
         </AppText>
       </View>
-      <View style={styles.list}>
+      <CardGroup>
         {custom.map((p) => (
           <PathCard
             key={p.id}
+            bare
             title={p.name}
             subtitle={`${p.summary} · ${minutesLabel(p)}`}
             icon="slider.horizontal.3"
-            accent="teal"
+            accent="breath"
             compact
             onPress={() => startBreath(p.id)}
             right={
@@ -78,27 +81,28 @@ export default function BreatheTab() {
                 accessibilityLabel={`Edit ${p.name}`}
                 hitSlop={12}
                 style={styles.edit}>
-                <Icon name="pencil" size={18} color={colors.textMuted} />
+                <Icon name="pencil" size={18} color={c.textSoft} />
               </Pressable>
             }
           />
         ))}
         <PathCard
+          key="build"
+          bare
           title="Build your own"
           subtitle="Inhale, hold, exhale, hold, rounds"
           icon="plus"
-          accent="teal"
+          accent="breath"
           compact
           onPress={() => router.push('/breath/builder')}
         />
-      </View>
+      </CardGroup>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { gap: space.sm, paddingTop: space.xl },
-  list: { gap: space.md },
-  sectionHeader: { paddingTop: space.md },
+  header: { gap: space.xs, paddingTop: space.lg },
+  sectionHeader: { paddingTop: space.sm },
   edit: { padding: space.sm },
 });

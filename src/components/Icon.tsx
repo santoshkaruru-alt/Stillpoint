@@ -1,6 +1,6 @@
 import { SymbolView, type SFSymbol } from 'expo-symbols';
 
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 interface Props {
   name: SFSymbol;
@@ -9,13 +9,14 @@ interface Props {
 }
 
 /** SF Symbol icon. Decorative by default: label the parent control instead. */
-export function Icon({ name, size = 22, color = colors.text }: Props) {
+export function Icon({ name, size = 22, color }: Props) {
+  const { c } = useTheme();
   return (
     <SymbolView
       name={name}
       size={size}
-      tintColor={color}
-      weight="regular"
+      tintColor={color ?? c.text}
+      weight="light"
       accessibilityElementsHidden
       importantForAccessibility="no"
     />

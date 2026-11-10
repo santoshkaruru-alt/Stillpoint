@@ -24,7 +24,7 @@ import type { BreathPattern } from '@/models/types';
 import { doneHaptic, phaseHaptic, tickHaptic } from '@/services/haptics';
 import { findPattern } from '@/store/customPatterns';
 import { useSettings } from '@/store/settings';
-import { colors, radius, space } from '@/theme';
+import { makeStyles, radius, space } from '@/theme';
 
 const TICK_MS = 100;
 /** Practices shorter than this are not logged. */
@@ -40,6 +40,7 @@ function resolvePattern(id: string, breaths?: string): BreathPattern | undefined
 }
 
 export default function BreathPlayer() {
+  const styles = useStyles();
   useScreenAwake('breath');
   const { pattern: patternId, breaths } = useLocalSearchParams<{ pattern: string; breaths?: string }>();
   const pattern = useMemo(() => resolvePattern(patternId, breaths), [patternId, breaths]);
@@ -47,7 +48,7 @@ export default function BreathPlayer() {
   if (!pattern) {
     return (
       <View style={styles.root}>
-        <GlowBackground accent="teal" />
+        <GlowBackground accent="breath" />
         <SafeAreaView style={styles.missing}>
           <AppText variant="title">That pattern was not found.</AppText>
           <Button label="Back" onPress={() => router.back()} />
@@ -59,6 +60,7 @@ export default function BreathPlayer() {
 }
 
 function Player({ pattern }: { pattern: BreathPattern }) {
+  const styles = useStyles();
   const { width } = useWindowDimensions();
   const reduceMotion = useReduceMotion();
   const hapticsOn = useSettings((s) => s.hapticsEnabled);
@@ -235,10 +237,10 @@ function Player({ pattern }: { pattern: BreathPattern }) {
   if (snap.finished) {
     return (
       <View style={styles.root}>
-        <GlowBackground accent="teal" glowY={0.4} />
+        <GlowBackground accent="breath" glowY={0.4} glowX={0.5} />
         <SafeAreaView style={styles.safe}>
           <View style={styles.finished}>
-            <AppText variant="overline" tone="teal">
+            <AppText variant="overline" tone="breath">
               Complete
             </AppText>
             <AppText variant="display" center accessibilityRole="header">
@@ -249,7 +251,7 @@ function Player({ pattern }: { pattern: BreathPattern }) {
             </AppText>
             {runner.holds.length > 0 ? <HoldTable holds={runner.holds} /> : null}
           </View>
-          <Button label="Continue" accent="teal" size="xl" onPress={goToSummary} />
+          <Button label="Continue" accent="breath" size="xl" onPress={goToSummary} />
         </SafeAreaView>
       </View>
     );
@@ -266,10 +268,10 @@ function Player({ pattern }: { pattern: BreathPattern }) {
 
   return (
     <View style={styles.root}>
-      <GlowBackground accent="teal" glowY={0.42} pulse={false} />
+      <GlowBackground accent="breath" glowY={0.42} glowX={0.5} pulse={false} ripples={false} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.top}>
-          <AppText variant="overline" tone="teal">
+          <AppText variant="overline" tone="breath">
             {pattern.name}
           </AppText>
           <AppText variant="caption" tone="muted" accessibilityLabel={`Round ${Math.max(1, step.round)} of ${rounds}`}>
@@ -321,7 +323,7 @@ function Player({ pattern }: { pattern: BreathPattern }) {
 
         <View style={styles.controls}>
           {isHold ? (
-            <Button label="Breathe in now" icon="lungs.fill" accent="teal" size="xl" onPress={endHold} />
+            <Button label="Breathe in now" icon="lungs.fill" accent="breath" size="xl" onPress={endHold} />
           ) : (
             <Button
               label={snap.paused ? 'Resume' : 'Pause'}
@@ -345,13 +347,14 @@ function Player({ pattern }: { pattern: BreathPattern }) {
 }
 
 function HoldTable({ holds }: { holds: { round: number; seconds: number; capped: boolean }[] }) {
+  const styles = useStyles();
   const best = Math.max(...holds.map((h) => h.seconds));
   return (
     <View style={styles.table} accessibilityLabel={`Breath holds: ${holds.map((h) => `round ${h.round}, ${Math.round(h.seconds)} seconds`).join('; ')}`}>
       {holds.map((h) => (
         <View key={h.round} style={styles.tableRow}>
           <AppText tone="muted">Round {h.round}</AppText>
-          <AppText variant="heading" tone={h.seconds === best ? 'teal' : 'default'}>
+          <AppText variant="heading" tone={h.seconds === best ? 'breath' : 'default'}>
             {formatClock(h.seconds)}
             {h.capped ? ' (max)' : ''}
           </AppText>
@@ -361,13 +364,14 @@ function HoldTable({ holds }: { holds: { round: number; seconds: number; capped:
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  root: { flex: 1, backgroundColor: c.bg },
   safe: { flex: 1, paddingHorizontal: space.lg, paddingBottom: space.md },
   missing: { flex: 1, padding: space.lg, gap: space.lg, justifyContent: 'center' },
   top: { alignItems: 'center', gap: space.xs, paddingTop: space.md },
   circleWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  onOrb: { textShadowColor: 'rgba(0,0,0,0.45)', textShadowRadius: 8 },
+  onOrb: { color: c.text },
   cueBox: { minHeight: 72, gap: space.sm, justifyContent: 'center', paddingBottom: space.md },
   controls: { gap: space.md },
   finished: { flex: 1, justifyContent: 'center', gap: space.md },
@@ -375,10 +379,11 @@ const styles = StyleSheet.create({
     marginTop: space.lg,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: c.line,
     padding: space.lg,
     gap: space.sm,
-    backgroundColor: 'rgba(26, 27, 68, 0.6)',
+    backgroundColor: c.surface,
   },
   tableRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-});
+  }),
+);

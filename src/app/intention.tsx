@@ -12,7 +12,7 @@ import { resolveIntention } from '@/engine/template';
 import { startMeditation } from '@/lib/navigation';
 import type { Intention } from '@/models/types';
 import { defaultIntention, useSettings } from '@/store/settings';
-import { colors, radius, space, type } from '@/theme';
+import { makeStyles, radius, space, type, useTheme } from '@/theme';
 
 const FIELDS: (keyof Intention)[] = ['identity', 'emotion', 'scene'];
 
@@ -21,6 +21,8 @@ const FIELDS: (keyof Intention)[] = ['identity', 'emotion', 'scene'];
  * These are woven into the Future Self part of every meditation.
  */
 export default function IntentionBuilder() {
+  const styles = useStyles();
+  const { c } = useTheme();
   const saved = useSettings((s) => s.intention);
   const set = useSettings((s) => s.set);
   const [draft, setDraft] = useState<Intention>(saved);
@@ -50,9 +52,9 @@ export default function IntentionBuilder() {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
-      <Screen accent="amber" edges={['top', 'bottom']}>
+      <Screen accent="warm" edges={['top', 'bottom']}>
         <View style={styles.header}>
-          <AppText variant="overline" tone="amber">
+          <AppText variant="overline" tone="warm">
             Intention
           </AppText>
           <AppText variant="title" accessibilityRole="header">
@@ -69,14 +71,14 @@ export default function IntentionBuilder() {
           return (
             <Card key={key} style={styles.card}>
               <AppText variant="label">{p.label}</AppText>
-              <AppText variant="caption" tone="amber">
+              <AppText variant="caption" tone="warm">
                 {p.lead}
               </AppText>
               <TextInput
                 value={draft[key]}
                 onChangeText={(v) => update(key, v)}
                 placeholder={p.placeholder}
-                placeholderTextColor={colors.textFaint}
+                placeholderTextColor={c.textFaint}
                 multiline={multiline}
                 style={[styles.input, multiline && styles.multiline]}
                 accessibilityLabel={p.label}
@@ -111,7 +113,7 @@ export default function IntentionBuilder() {
           <Button label="Hear it" icon="speaker.wave.2" kind="secondary" size="md" onPress={hear} />
         </Card>
 
-        <Button label="Save and begin 20 min" icon="play.fill" accent="amber" size="xl" onPress={saveAndBegin} />
+        <Button label="Save and begin 20 min" icon="play.fill" accent="warm" size="xl" onPress={saveAndBegin} />
         <Button label="Save" kind="secondary" onPress={save} />
         <Button label="Clear all" kind="ghost" onPress={() => setDraft(defaultIntention)} />
       </Screen>
@@ -119,15 +121,16 @@ export default function IntentionBuilder() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  flex: { flex: 1, backgroundColor: c.bg },
   header: { gap: space.sm, paddingTop: space.md },
   card: { gap: space.sm },
   input: {
     ...type.body,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    color: c.text,
+    backgroundColor: c.surface,
+    borderColor: c.line,
     borderWidth: 1,
     borderRadius: radius.md,
     paddingHorizontal: space.md,
@@ -139,10 +142,11 @@ const styles = StyleSheet.create({
   chip: {
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: c.line,
     paddingHorizontal: space.md,
     paddingVertical: space.sm,
     maxWidth: 280,
   },
-  preview: { fontStyle: 'italic', color: colors.textMuted },
-});
+  preview: { fontStyle: 'italic', color: c.textSoft },
+  }),
+);

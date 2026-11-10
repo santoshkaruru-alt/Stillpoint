@@ -4,19 +4,24 @@ import { safetyAcknowledge, safetyFooter, safetyIntro, safetyTitle } from '@cont
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { Enso } from '@/components/Enso';
 import { SafetyList } from '@/components/SafetyList';
 import { Screen } from '@/components/Screen';
 import { useSettings } from '@/store/settings';
-import { space } from '@/theme';
+import { space, useTheme } from '@/theme';
 
 /** First-launch safety screen. The app stays locked until acknowledged. */
 export default function Welcome() {
   const set = useSettings((s) => s.set);
+  const { c } = useTheme();
 
   return (
-    <Screen edges={['top', 'bottom']} accent="amber">
+    <Screen edges={['top', 'bottom']} accent="warm">
       <View style={styles.header}>
-        <AppText variant="overline" tone="amber">
+        <View style={styles.enso}>
+          <Enso size={120} color={c.text} opacity={0.8} />
+        </View>
+        <AppText variant="overline" tone="warm">
           Stillpoint
         </AppText>
         <AppText variant="display" accessibilityRole="header">
@@ -32,7 +37,7 @@ export default function Welcome() {
       </AppText>
       <Button
         label={safetyAcknowledge}
-        accent="amber"
+        accent="warm"
         size="xl"
         onPress={() => set({ safetyAcknowledgedAt: Date.now() })}
         accessibilityHint="Confirms you have read the safety guidance and opens the app"
@@ -42,5 +47,6 @@ export default function Welcome() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: space.sm, paddingTop: space.xl },
+  header: { gap: space.sm, paddingTop: space.lg },
+  enso: { alignSelf: 'flex-start', marginLeft: -12, marginBottom: space.sm },
 });

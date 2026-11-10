@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "stillpoint",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#07071A",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F2F0E9",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.stillpoint.app",
@@ -22,9 +22,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#07071A",
+          "backgroundColor": "#F2F0E9",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 120
+          "imageWidth": 140,
+          "dark": {
+            "backgroundColor": "#111411",
+            "image": "./assets/images/splash-icon-dark.png"
+          }
         }
       ],
       [
@@ -38,7 +42,7 @@
       [
         "expo-notifications",
         {
-          "color": "#9C8CFF"
+          "color": "#516C4D"
         }
       ],
       "expo-asset"
@@ -52,8 +56,8 @@
       "name": "Stillpoint",
       "shortName": "Stillpoint",
       "description": "Guided meditation and breathwork",
-      "themeColor": "#07071A",
-      "backgroundColor": "#07071A"
+      "themeColor": "#F2F0E9",
+      "backgroundColor": "#F2F0E9"
     }
   }
 }

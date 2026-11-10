@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { SFSymbol } from 'expo-symbols';
 
-import { colors } from '@/theme';
+import { fonts, useTheme } from '@/theme';
 
 import { Icon } from './Icon';
 
@@ -17,21 +17,24 @@ const tabs: { name: string; title: string; icon: SFSymbol }[] = [
 /** Bottom tab bar for the web app (the native app uses system tabs). */
 export function AppTabs() {
   const insets = useSafeAreaInsets();
+  const { c } = useTheme();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.violet,
-        tabBarInactiveTintColor: colors.textFaint,
+        tabBarActiveTintColor: c.calm,
+        tabBarInactiveTintColor: c.textFaint,
         tabBarStyle: {
-          backgroundColor: 'rgba(10, 10, 32, 0.96)',
-          borderTopColor: colors.border,
+          backgroundColor: c.tabBar,
+          borderTopColor: c.line,
+          elevation: 0,
+          shadowOpacity: 0,
           height: 70 + insets.bottom,
           paddingTop: 4,
           paddingBottom: 6 + insets.bottom,
         },
-        tabBarLabelStyle: { fontSize: 12, lineHeight: 16, fontWeight: '600' },
-        sceneStyle: { backgroundColor: colors.bg },
+        tabBarLabelStyle: { fontSize: 11, lineHeight: 16, fontFamily: fonts.sansMedium, letterSpacing: 0.4 },
+        sceneStyle: { backgroundColor: c.bg },
       }}>
       {tabs.map((t) => (
         <Tabs.Screen

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { accentColor, colors, radius, space, type Accent } from '@/theme';
+import { radius, space, useTheme, type Accent } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -18,8 +18,10 @@ interface Props<T> {
   wrap?: boolean;
 }
 
-/** Row of pill buttons, one selected. Used for small discrete choices. */
-export function Segmented<T extends string | number>({ options, value, onChange, accent = 'violet', wrap }: Props<T>) {
+/** Row of soft pills, one selected. Used for small discrete choices. */
+export function Segmented<T extends string | number>({ options, value, onChange, accent = 'calm', wrap }: Props<T>) {
+  const { c } = useTheme();
+  const soft = { calm: c.calmSoft, breath: c.breathSoft, warm: c.warmSoft }[accent];
   return (
     <View style={[styles.row, wrap && styles.wrap]} accessibilityRole="radiogroup">
       {options.map((o) => {
@@ -34,9 +36,9 @@ export function Segmented<T extends string | number>({ options, value, onChange,
             style={[
               styles.pill,
               !wrap && styles.flex,
-              selected && { backgroundColor: accentColor[accent], borderColor: accentColor[accent] },
+              { borderColor: selected ? c[accent] : c.lineStrong, backgroundColor: selected ? soft : 'transparent' },
             ]}>
-            <AppText variant="label" center style={{ color: selected ? colors.onAccent : colors.text }}>
+            <AppText variant="label" center style={{ color: selected ? c[accent] : c.textSoft }}>
               {o.label}
             </AppText>
           </Pressable>
@@ -51,14 +53,12 @@ const styles = StyleSheet.create({
   wrap: { flexWrap: 'wrap' },
   flex: { flex: 1 },
   pill: {
-    minHeight: 48,
+    minHeight: 46,
     minWidth: 48,
     paddingHorizontal: space.md,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.surface,
   },
 });

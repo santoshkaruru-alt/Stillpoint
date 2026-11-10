@@ -1,19 +1,20 @@
 import { Text, type TextProps } from 'react-native';
 
-import { colors, maxScale, type, type TypeVariant } from '@/theme';
+import { maxScale, type, useTheme, type Palette, type TypeVariant } from '@/theme';
 
-type Tone = 'default' | 'muted' | 'faint' | 'violet' | 'teal' | 'amber' | 'danger' | 'onAccent';
+export type Tone = 'default' | 'muted' | 'faint' | 'calm' | 'breath' | 'warm' | 'danger' | 'onAccent';
 
-const toneColor: Record<Tone, string> = {
-  default: colors.text,
-  muted: colors.textMuted,
-  faint: colors.textFaint,
-  violet: colors.violet,
-  teal: colors.teal,
-  amber: colors.amber,
-  danger: colors.danger,
-  onAccent: colors.onAccent,
-};
+const toneColor = (c: Palette, tone: Tone): string =>
+  ({
+    default: c.text,
+    muted: c.textSoft,
+    faint: c.textFaint,
+    calm: c.calm,
+    breath: c.breath,
+    warm: c.warm,
+    danger: c.danger,
+    onAccent: c.onAccent,
+  })[tone];
 
 export interface AppTextProps extends TextProps {
   variant?: TypeVariant;
@@ -22,10 +23,11 @@ export interface AppTextProps extends TextProps {
 }
 
 export function AppText({ variant = 'body', tone = 'default', center, style, ...rest }: AppTextProps) {
+  const { c } = useTheme();
   return (
     <Text
       maxFontSizeMultiplier={maxScale[variant]}
-      style={[type[variant], { color: toneColor[tone] }, center && { textAlign: 'center' }, style]}
+      style={[type[variant], { color: toneColor(c, tone) }, center && { textAlign: 'center' }, style]}
       {...rest}
     />
   );

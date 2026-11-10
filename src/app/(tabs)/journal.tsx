@@ -12,9 +12,10 @@ import { Screen } from '@/components/Screen';
 import { deleteJournal, listHolds, listJournal, listPractices, useDataVersion } from '@/db';
 import { averageMoodLift, currentStreak, holdTrend, longestStreak, minutesByDay, practiceDays, totalMinutes } from '@/engine/stats';
 import type { JournalEntry, PracticeLog } from '@/models/types';
-import { colors, space } from '@/theme';
+import { makeStyles, space } from '@/theme';
 
 export default function JournalTab() {
+  const styles = useStyles();
   const version = useDataVersion((s) => s.v);
   const { width } = useWindowDimensions();
 
@@ -39,9 +40,9 @@ export default function JournalTab() {
   const chartWidth = width - space.lg * 2 - space.lg * 2;
 
   return (
-    <Screen accent="amber">
+    <Screen accent="warm">
       <View style={styles.header}>
-        <AppText variant="overline" tone="amber">
+        <AppText variant="overline" tone="warm">
           Journal
         </AppText>
         <AppText variant="display" accessibilityRole="header">
@@ -59,7 +60,7 @@ export default function JournalTab() {
         />
       </View>
 
-      <Button label="Write a note" icon="square.and.pencil" accent="amber" onPress={() => router.push('/journal/new')} />
+      <Button label="Write a note" icon="square.and.pencil" accent="warm" onPress={() => router.push('/journal/new')} />
 
       <Card>
         <HistoryCalendar minutes={data.byDay} />
@@ -90,10 +91,11 @@ export default function JournalTab() {
 }
 
 function Tile({ value, label, sub }: { value: string; label: string; sub: string }) {
+  const styles = useStyles();
   return (
     <View style={styles.tile} accessible accessibilityLabel={`${value} ${label}. ${sub}`}>
-      <AppText variant="title">{value}</AppText>
-      <AppText variant="caption" tone="muted">
+      <AppText variant="title" style={styles.tileValue}>{value}</AppText>
+      <AppText variant="overline" tone="muted" style={styles.tileLabel}>
         {label}
       </AppText>
       <AppText variant="caption" tone="faint" numberOfLines={2}>
@@ -104,6 +106,7 @@ function Tile({ value, label, sub }: { value: string; label: string; sub: string
 }
 
 function EntryRow({ entry, practice }: { entry: JournalEntry; practice?: PracticeLog }) {
+  const styles = useStyles();
   const when = new Date(entry.createdAt).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   const mood =
     entry.moodBefore !== null && entry.moodAfter !== null
@@ -128,7 +131,7 @@ function EntryRow({ entry, practice }: { entry: JournalEntry; practice?: Practic
             {when}
           </AppText>
           {mood ? (
-            <AppText variant="caption" tone="amber">
+            <AppText variant="caption" tone="warm">
               {mood}
             </AppText>
           ) : null}
@@ -140,15 +143,18 @@ function EntryRow({ entry, practice }: { entry: JournalEntry; practice?: Practic
   );
 }
 
-const styles = StyleSheet.create({
-  header: { gap: space.sm, paddingTop: space.xl },
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  header: { gap: space.xs, paddingTop: space.lg },
+  tileValue: { color: c.warm, fontSize: 38, lineHeight: 42 },
+  tileLabel: { fontSize: 10, letterSpacing: 1.6 },
   tiles: { flexDirection: 'row', gap: space.sm },
   tile: {
     flex: 1,
-    backgroundColor: 'rgba(26, 27, 68, 0.72)',
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 20,
+    backgroundColor: c.surface,
+    borderColor: c.line,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 22,
     padding: space.md,
     gap: 2,
   },
@@ -156,4 +162,5 @@ const styles = StyleSheet.create({
   section: { gap: space.md },
   entry: { gap: space.xs, paddingVertical: space.md },
   entryTop: { flexDirection: 'row', justifyContent: 'space-between', gap: space.md },
-});
+  }),
+);

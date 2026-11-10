@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { monthGrid } from '@/engine/stats';
-import { colors, radius, space } from '@/theme';
+import { makeStyles, radius, space, useTheme, withAlpha } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -11,6 +11,8 @@ const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 /** Month view with a soft dot on every day you practised. */
 export function HistoryCalendar({ minutes }: { minutes: Map<string, number> }) {
+  const styles = useStyles();
+  const { c } = useTheme();
   const today = new Date();
   const [cursor, setCursor] = useState({ y: today.getFullYear(), m: today.getMonth() });
   const weeks = monthGrid(cursor.y, cursor.m, today);
@@ -28,7 +30,7 @@ export function HistoryCalendar({ minutes }: { minutes: Map<string, number> }) {
     <View style={styles.wrap}>
       <View style={styles.header}>
         <Pressable onPress={() => shift(-1)} accessibilityRole="button" accessibilityLabel="Previous month" hitSlop={10} style={styles.nav}>
-          <Icon name="chevron.left" size={16} color={colors.textMuted} />
+          <Icon name="chevron.left" size={16} color={c.textSoft} />
         </Pressable>
         <View style={styles.title}>
           <AppText variant="label" center accessibilityRole="header">
@@ -45,7 +47,7 @@ export function HistoryCalendar({ minutes }: { minutes: Map<string, number> }) {
           accessibilityLabel="Next month"
           hitSlop={10}
           style={[styles.nav, isCurrent && styles.disabled]}>
-          <Icon name="chevron.right" size={16} color={colors.textMuted} />
+          <Icon name="chevron.right" size={16} color={c.textSoft} />
         </Pressable>
       </View>
       <View style={styles.row}>
@@ -69,10 +71,10 @@ export function HistoryCalendar({ minutes }: { minutes: Map<string, number> }) {
                 <View
                   style={[
                     styles.day,
-                    level > 0 && { backgroundColor: `rgba(167, 151, 255, ${0.25 + level * 0.22})` },
+                    level > 0 && { backgroundColor: level === 3 ? c.calm : withAlpha(c.calm, level === 1 ? 0.22 : 0.45) },
                     d.isToday && styles.today,
                   ]}>
-                  <AppText variant="caption" style={{ color: !d.inMonth ? 'transparent' : level >= 2 ? colors.onAccent : colors.textMuted }}>
+                  <AppText variant="caption" style={{ color: !d.inMonth ? 'transparent' : level === 3 ? c.onAccent : level > 0 ? c.text : c.textSoft }}>
                     {d.date}
                   </AppText>
                 </View>
@@ -85,7 +87,8 @@ export function HistoryCalendar({ minutes }: { minutes: Map<string, number> }) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
   wrap: { gap: space.xs },
   header: { flexDirection: 'row', alignItems: 'center', paddingBottom: space.sm },
   title: { flex: 1 },
@@ -94,5 +97,6 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row' },
   cell: { flex: 1, alignItems: 'center', paddingVertical: 2 },
   day: { width: 36, height: 36, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
-  today: { borderWidth: 1.5, borderColor: colors.amber },
-});
+  today: { borderWidth: 1.5, borderColor: c.warm },
+  }),
+);

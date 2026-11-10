@@ -28,9 +28,9 @@ export default function BreathSafety() {
   };
 
   return (
-    <Screen accent="amber" edges={['top', 'bottom']}>
+    <Screen accent="warm" edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <AppText variant="overline" tone="amber">
+        <AppText variant="overline" tone="warm">
           {pattern?.name ?? 'Breathwork'}
         </AppText>
         <AppText variant="title" accessibilityRole="header">
@@ -48,14 +48,14 @@ export default function BreathSafety() {
             options={BREATH_OPTIONS.map((n) => ({ value: n, label: String(n) }))}
             value={breaths}
             onChange={setBreaths}
-            accent="amber"
+            accent="warm"
           />
         </View>
       ) : null}
       <AppText variant="caption" tone="faint">
         {safetyFooter} A large Stop button stays on screen the whole time.
       </AppText>
-      <Button label="I understand, begin" accent="amber" size="xl" onPress={start} />
+      <Button label="I understand, begin" accent="warm" size="xl" onPress={start} />
       <Button label="Not now" kind="ghost" onPress={() => router.back()} />
     </Screen>
   );

@@ -12,7 +12,7 @@ import { space } from '@/theme';
 /** Safety guidance, reachable any time from Settings. */
 export default function SafetyInfo() {
   return (
-    <Screen accent="amber" edges={['top', 'bottom']}>
+    <Screen accent="warm" edges={['top', 'bottom']}>
       <View style={styles.header}>
         <AppText variant="title" accessibilityRole="header">
           {safetyTitle}

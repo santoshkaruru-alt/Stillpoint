@@ -3,8 +3,10 @@ import { persist } from 'zustand/middleware';
 
 import { kvStorage } from './kv';
 import type { AmbientBedId, Intention, SessionLength } from '@/models/types';
+import type { ThemeName } from '@/theme/palettes';
 
 export type ReduceMotionPref = 'system' | 'on' | 'off';
+export type AppearancePref = 'system' | 'light' | 'dark';
 
 export type LastSession =
   | { kind: 'meditation'; lengthMin: SessionLength; segmentIndex: number; title: string; at: number }
@@ -42,6 +44,8 @@ export interface SettingsState {
   breathSounds: boolean;
 
   // Display
+  appearance: AppearancePref;
+  themeName: ThemeName;
   reduceMotion: ReduceMotionPref;
   dimDuringSession: boolean;
 
@@ -75,6 +79,8 @@ export const useSettings = create<SettingsState>()(
       hapticsEnabled: true,
       breathSounds: true,
 
+      appearance: 'system',
+      themeName: 'sage',
       reduceMotion: 'system',
       dimDuringSession: true,
 

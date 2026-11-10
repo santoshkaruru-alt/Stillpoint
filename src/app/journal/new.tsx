@@ -8,10 +8,12 @@ import { Card } from '@/components/Card';
 import { MoodPicker } from '@/components/MoodPicker';
 import { Screen } from '@/components/Screen';
 import { newId, saveJournal } from '@/db';
-import { colors, radius, space, type } from '@/theme';
+import { makeStyles, radius, space, type, useTheme } from '@/theme';
 
 /** A standalone journal note with an optional mood rating. */
 export default function NewNote() {
+  const styles = useStyles();
+  const { c } = useTheme();
   const [mood, setMood] = useState<number | null>(null);
   const [note, setNote] = useState('');
   const canSave = mood !== null || note.trim().length > 0;
@@ -23,7 +25,7 @@ export default function NewNote() {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
-      <Screen accent="amber" edges={['top', 'bottom']}>
+      <Screen accent="warm" edges={['top', 'bottom']}>
         <View style={styles.header}>
           <AppText variant="title" accessibilityRole="header">
             A note to yourself
@@ -37,32 +39,34 @@ export default function NewNote() {
           value={note}
           onChangeText={setNote}
           placeholder="Write freely…"
-          placeholderTextColor={colors.textFaint}
+          placeholderTextColor={c.textFaint}
           multiline
           autoFocus
           style={styles.input}
           accessibilityLabel="Note"
           maxLength={2000}
         />
-        <Button label="Save" accent="amber" size="xl" onPress={save} disabled={!canSave} />
+        <Button label="Save" accent="warm" size="xl" onPress={save} disabled={!canSave} />
         <Button label="Cancel" kind="ghost" onPress={() => router.back()} />
       </Screen>
     </KeyboardAvoidingView>
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  flex: { flex: 1, backgroundColor: c.bg },
   header: { gap: space.sm, paddingTop: space.md },
   input: {
     ...type.body,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    color: c.text,
+    backgroundColor: c.surface,
+    borderColor: c.line,
     borderWidth: 1,
     borderRadius: radius.md,
     padding: space.md,
     minHeight: 180,
     textAlignVertical: 'top',
   },
-});
+  }),
+);

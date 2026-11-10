@@ -11,12 +11,14 @@ import { newId } from '@/db';
 import { buildBreathSteps, estimateDurationSec, formatClock } from '@/engine/breath';
 import type { PacedPattern } from '@/models/types';
 import { useCustomPatterns } from '@/store/customPatterns';
-import { colors, radius, space, type } from '@/theme';
+import { makeStyles, radius, space, type, useTheme } from '@/theme';
 
 const secs = (v: number) => (v === 0 ? 'off' : `${v}s`);
 
 /** Build a custom paced pattern: inhale, hold, exhale, hold, rounds. */
 export default function Builder() {
+  const styles = useStyles();
+  const { c } = useTheme();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const existing = useCustomPatterns((s) => s.patterns.find((p) => p.id === id));
   const save = useCustomPatterns((s) => s.save);
@@ -51,7 +53,7 @@ export default function Builder() {
   };
 
   return (
-    <Screen accent="teal" edges={['top', 'bottom']}>
+    <Screen accent="breath" edges={['top', 'bottom']}>
       <View style={styles.header}>
         <AppText variant="title" accessibilityRole="header">
           {existing ? 'Edit pattern' : 'Build a pattern'}
@@ -63,7 +65,7 @@ export default function Builder() {
         value={name}
         onChangeText={setName}
         placeholder="Name (optional)"
-        placeholderTextColor={colors.textFaint}
+        placeholderTextColor={c.textFaint}
         style={styles.input}
         accessibilityLabel="Pattern name"
         maxLength={40}
@@ -71,18 +73,18 @@ export default function Builder() {
       />
 
       <Card style={styles.card}>
-        <Stepper label="Breathe in" value={inhale} onChange={setInhale} min={1} max={15} step={0.5} format={secs} accent="teal" />
-        <Stepper label="Hold" value={holdIn} onChange={setHoldIn} min={0} max={30} step={0.5} format={secs} accent="teal" />
-        <Stepper label="Breathe out" value={exhale} onChange={setExhale} min={1} max={20} step={0.5} format={secs} accent="teal" />
-        <Stepper label="Hold empty" value={holdOut} onChange={setHoldOut} min={0} max={30} step={0.5} format={secs} accent="teal" />
-        <Stepper label="Rounds" value={rounds} onChange={setRounds} min={1} max={99} accent="teal" />
+        <Stepper label="Breathe in" value={inhale} onChange={setInhale} min={1} max={15} step={0.5} format={secs} accent="breath" />
+        <Stepper label="Hold" value={holdIn} onChange={setHoldIn} min={0} max={30} step={0.5} format={secs} accent="breath" />
+        <Stepper label="Breathe out" value={exhale} onChange={setExhale} min={1} max={20} step={0.5} format={secs} accent="breath" />
+        <Stepper label="Hold empty" value={holdOut} onChange={setHoldOut} min={0} max={30} step={0.5} format={secs} accent="breath" />
+        <Stepper label="Rounds" value={rounds} onChange={setRounds} min={1} max={99} accent="breath" />
       </Card>
 
       <AppText tone="muted" center accessibilityLiveRegion="polite">
         About {formatClock(total)} in total
       </AppText>
 
-      <Button label="Save and start" icon="play.fill" accent="teal" size="xl" onPress={saveAndStart} />
+      <Button label="Save and start" icon="play.fill" accent="breath" size="xl" onPress={saveAndStart} />
       <Button
         label="Save"
         kind="secondary"
@@ -105,17 +107,19 @@ export default function Builder() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
   header: { gap: space.sm, paddingTop: space.md },
   card: { gap: space.sm },
   input: {
     ...type.body,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    color: c.text,
+    backgroundColor: c.surface,
+    borderColor: c.line,
     borderWidth: 1,
     borderRadius: radius.md,
     paddingHorizontal: space.md,
     minHeight: 56,
   },
-});
+  }),
+);

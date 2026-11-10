@@ -1,7 +1,7 @@
 import type { SFSymbol } from 'expo-symbols';
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 
-import { accentColor, colors, radius, space, touch, type Accent } from '@/theme';
+import { fonts, radius, space, touch, useTheme, type Accent } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -24,23 +24,17 @@ export function Button({
   label,
   onPress,
   kind = 'primary',
-  accent = 'violet',
+  accent = 'calm',
   icon,
   size = 'lg',
   disabled,
   accessibilityHint,
   style,
 }: Props) {
-  const height = size === 'xl' ? 84 : size === 'lg' ? 60 : touch;
-  const bg =
-    kind === 'primary'
-      ? accentColor[accent]
-      : kind === 'danger'
-        ? colors.danger
-        : kind === 'secondary'
-          ? colors.surfaceRaised
-          : 'transparent';
-  const fg = kind === 'primary' || kind === 'danger' ? colors.onAccent : colors.text;
+  const { c } = useTheme();
+  const height = size === 'xl' ? 76 : size === 'lg' ? 58 : touch;
+  const fill = kind === 'primary' ? c[accent] : kind === 'danger' ? c.danger : 'transparent';
+  const fg = kind === 'primary' ? c.onAccent : kind === 'danger' ? c.onDanger : kind === 'ghost' ? c.textSoft : c.text;
 
   return (
     <Pressable
@@ -52,13 +46,16 @@ export function Button({
       accessibilityState={{ disabled: !!disabled }}
       style={({ pressed }) => [
         styles.base,
-        { minHeight: height, backgroundColor: bg, opacity: disabled ? 0.4 : pressed ? 0.8 : 1 },
-        kind === 'secondary' && styles.outlined,
+        { minHeight: height, backgroundColor: fill, opacity: disabled ? 0.4 : pressed ? 0.78 : 1 },
+        kind === 'secondary' && { borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.lineStrong },
+        pressed && styles.pressed,
         style,
       ]}>
       <View style={styles.row}>
-        {icon ? <Icon name={icon} size={size === 'xl' ? 30 : 22} color={fg} /> : null}
-        <AppText variant={size === 'xl' ? 'heading' : 'label'} style={{ color: fg }}>
+        {icon ? <Icon name={icon} size={size === 'xl' ? 24 : 18} color={fg} /> : null}
+        <AppText
+          variant="label"
+          style={[{ color: fg }, size === 'xl' && styles.xlLabel, kind === 'ghost' && styles.ghostLabel]}>
           {label}
         </AppText>
       </View>
@@ -73,6 +70,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  outlined: { borderWidth: 1, borderColor: colors.borderStrong },
+  pressed: { transform: [{ scale: 0.985 }] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  xlLabel: { fontSize: 17, letterSpacing: 0.6, fontFamily: fonts.sansSemi },
+  ghostLabel: { fontFamily: fonts.sansMedium },
 });

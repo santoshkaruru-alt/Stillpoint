@@ -11,12 +11,13 @@ import { Segmented } from '@/components/Segmented';
 import { Field, Section, ToggleRow } from '@/components/SettingRow';
 import { Screen } from '@/components/Screen';
 import { Stepper } from '@/components/Stepper';
+import { ThemePicker } from '@/components/ThemePicker';
 import type { AmbientBedId } from '@/models/types';
 import { clearAllData } from '@/db';
 import { isWeb } from '@/lib/platformSetup';
 import { ensurePermission, remindersSupported, syncReminders } from '@/services/notifications';
 import { useSettings, type ReminderSettings } from '@/store/settings';
-import { colors, space } from '@/theme';
+import { space, useTheme } from '@/theme';
 
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 
@@ -26,6 +27,7 @@ function formatTime(mins: number): string {
 }
 
 export default function SettingsTab() {
+  const { c } = useTheme();
   const s = useSettings();
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [showVoices, setShowVoices] = useState(false);
@@ -73,13 +75,30 @@ export default function SettingsTab() {
   return (
     <Screen>
       <View style={styles.header}>
-        <AppText variant="overline" tone="violet">
+        <AppText variant="overline" tone="calm">
           Settings
         </AppText>
         <AppText variant="display" accessibilityRole="header">
           Make it yours
         </AppText>
       </View>
+
+      <Section title="Appearance">
+        <Field label="Mode" hint="System follows your phone's light or dark setting.">
+          <Segmented
+            options={[
+              { value: 'system', label: 'System' },
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+            ]}
+            value={s.appearance}
+            onChange={(v) => s.set({ appearance: v })}
+          />
+        </Field>
+        <Field label="Theme">
+          <ThemePicker value={s.themeName} onChange={(t) => s.set({ themeName: t })} />
+        </Field>
+      </Section>
 
       {remindersSupported ? (
       <Section title="Reminders">
@@ -154,7 +173,7 @@ export default function SettingsTab() {
               {currentVoice}
             </AppText>
           </View>
-          <Icon name={showVoices ? 'chevron.up' : 'chevron.down'} size={16} color={colors.textFaint} />
+          <Icon name={showVoices ? 'chevron.up' : 'chevron.down'} size={16} color={c.textFaint} />
         </Pressable>
         {showVoices ? (
           <View style={styles.voiceList}>
@@ -172,11 +191,11 @@ export default function SettingsTab() {
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}
                   style={styles.voiceOption}>
-                  <AppText style={styles.flex} tone={selected ? 'violet' : 'default'}>
+                  <AppText style={styles.flex} tone={selected ? 'calm' : 'default'}>
                     {v.name}
                     {v.quality === 'Enhanced' ? '  ·  Enhanced' : ''}
                   </AppText>
-                  {selected ? <Icon name="checkmark" size={16} color={colors.violet} /> : null}
+                  {selected ? <Icon name="checkmark" size={16} color={c.calm} /> : null}
                 </Pressable>
               );
             })}
@@ -240,7 +259,7 @@ export default function SettingsTab() {
         <ToggleRow label="Sound cues" hint="Soft tones at each phase" value={s.breathSounds} onChange={(v) => s.set({ breathSounds: v })} />
       </Section>
 
-      <Section title="Display">
+      <Section title="Motion and screen">
         <Field label="Reduce motion" hint="System follows your iPhone accessibility setting.">
           <Segmented
             options={[
@@ -287,7 +306,7 @@ export default function SettingsTab() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: space.sm, paddingTop: space.xl },
+  header: { gap: space.xs, paddingTop: space.lg },
   flex: { flex: 1 },
   voiceRow: { flexDirection: 'row', alignItems: 'center', minHeight: 52, gap: space.md },
   voiceList: { gap: space.xs },

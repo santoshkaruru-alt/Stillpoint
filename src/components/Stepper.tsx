@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { accentColor, colors, radius, space, type Accent } from '@/theme';
+import { radius, space, useTheme, type Accent } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -23,7 +23,8 @@ const round = (v: number) => Math.round(v * 100) / 100;
  * Minus / value / plus control. Exposed to VoiceOver as an adjustable
  * element, so swiping up and down changes the value.
  */
-export function Stepper({ label, value, onChange, min, max, step = 1, format = String, accent = 'violet', hint }: Props) {
+export function Stepper({ label, value, onChange, min, max, step = 1, format = String, accent = 'calm', hint }: Props) {
+  const { c } = useTheme();
   const dec = () => onChange(Math.max(min, round(value - step)));
   const inc = () => onChange(Math.min(max, round(value + step)));
 
@@ -46,14 +47,14 @@ export function Stepper({ label, value, onChange, min, max, step = 1, format = S
         ) : null}
       </View>
       <View style={styles.controls}>
-        <Pressable onPress={dec} disabled={value <= min} style={[styles.btn, value <= min && styles.disabled]} hitSlop={6}>
-          <Icon name="minus" size={18} color={accentColor[accent]} />
+        <Pressable onPress={dec} disabled={value <= min} style={[styles.btn, { borderColor: c.lineStrong }, value <= min && styles.disabled]} hitSlop={6}>
+          <Icon name="minus" size={18} color={c[accent]} />
         </Pressable>
         <AppText variant="heading" style={styles.value}>
           {format(value)}
         </AppText>
-        <Pressable onPress={inc} disabled={value >= max} style={[styles.btn, value >= max && styles.disabled]} hitSlop={6}>
-          <Icon name="plus" size={18} color={accentColor[accent]} />
+        <Pressable onPress={inc} disabled={value >= max} style={[styles.btn, { borderColor: c.lineStrong }, value >= max && styles.disabled]} hitSlop={6}>
+          <Icon name="plus" size={18} color={c[accent]} />
         </Pressable>
       </View>
     </View>
@@ -69,7 +70,6 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
 
-import { colors, space } from '@/theme';
+import { makeStyles, radius, space, useTheme } from '@/theme';
 
 import { AppText } from './AppText';
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {
+  const styles = useStyles();
   return (
     <View style={styles.section}>
       <AppText variant="overline" tone="faint" accessibilityRole="header">
@@ -27,6 +28,8 @@ export function ToggleRow({
   value: boolean;
   onChange: (v: boolean) => void;
 }) {
+  const styles = useStyles();
+  const { c } = useTheme();
   return (
     <View style={styles.row}>
       <View style={styles.text}>
@@ -42,14 +45,15 @@ export function ToggleRow({
         onValueChange={onChange}
         accessibilityLabel={label}
         accessibilityHint={hint}
-        trackColor={{ true: colors.violet, false: colors.surfaceRaised }}
-        thumbColor={colors.text}
+        trackColor={{ true: c.calm, false: c.lineStrong }}
+        thumbColor="#FFFFFF"
       />
     </View>
   );
 }
 
 export function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
+  const styles = useStyles();
   return (
     <View style={styles.field}>
       <AppText variant="label">{label}</AppText>
@@ -63,13 +67,14 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
   section: { gap: space.sm },
   card: {
-    backgroundColor: 'rgba(26, 27, 68, 0.72)',
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 24,
+    backgroundColor: c.surface,
+    borderColor: c.line,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radius.lg,
     paddingHorizontal: space.lg,
     paddingVertical: space.md,
     gap: space.md,
@@ -78,4 +83,5 @@ const styles = StyleSheet.create({
   text: { flex: 1, gap: 2 },
   field: { gap: space.xs },
   fieldBody: { paddingTop: space.sm },
-});
+  }),
+);

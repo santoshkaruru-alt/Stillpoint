@@ -1,83 +1,59 @@
 /**
- * Stillpoint design tokens. Dark-first: deep indigo fading to near-black,
- * soft violet and teal glows, large readable type.
+ * Stillpoint design system: calm, natural palettes in light and dark,
+ * a refined serif for headings (Cormorant Garamond) and a soft sans for
+ * everything else (Manrope), generous space and quiet hairlines.
+ *
+ * Colours come from the active palette via useTheme(); this file holds the
+ * scheme-independent tokens.
  */
+import type { TextStyle } from 'react-native';
 
-export const colors = {
-  bg: '#07071A',
-  bgTop: '#14123A',
-  surface: '#111232',
-  surfaceRaised: '#1A1B44',
-  border: 'rgba(196, 190, 255, 0.12)',
-  borderStrong: 'rgba(196, 190, 255, 0.28)',
+export { palettes, themeLabels, type Palette, type Scheme, type ThemeName } from './palettes';
+export { makeStyles, ThemeProvider, useTheme } from './ThemeProvider';
+export { withAlpha } from './color';
 
-  text: '#EEEDFF',
-  textMuted: '#B4B2D9',
-  textFaint: '#7D7BA8',
+/** The three accent roles each palette provides. */
+export type Accent = 'calm' | 'breath' | 'warm';
 
-  /** Meditation accent */
-  violet: '#A797FF',
-  violetDeep: '#5B4BD6',
-  /** Breath accent */
-  teal: '#6FE0CF',
-  tealDeep: '#1F8F86',
-  /** Journal / heart accent */
-  amber: '#F6C08E',
-  amberDeep: '#B4693A',
-
-  danger: '#FF7A7A',
-  dangerDeep: '#B3262E',
-  onAccent: '#0B0A22',
+export const fonts = {
+  serifLight: 'CormorantGaramond_300Light',
+  serif: 'CormorantGaramond_400Regular',
+  serifItalic: 'CormorantGaramond_400Regular_Italic',
+  serifMedium: 'CormorantGaramond_500Medium',
+  sans: 'Manrope_400Regular',
+  sansMedium: 'Manrope_500Medium',
+  sansSemi: 'Manrope_600SemiBold',
 } as const;
-
-export const glow = {
-  violet: 'rgba(132, 110, 255, 0.55)',
-  teal: 'rgba(80, 210, 190, 0.45)',
-  amber: 'rgba(246, 170, 110, 0.40)',
-} as const;
-
-export type Accent = 'violet' | 'teal' | 'amber';
-
-export const accentColor: Record<Accent, string> = {
-  violet: colors.violet,
-  teal: colors.teal,
-  amber: colors.amber,
-};
-
-export const accentDeep: Record<Accent, string> = {
-  violet: colors.violetDeep,
-  teal: colors.tealDeep,
-  amber: colors.amberDeep,
-};
 
 /**
- * Type scale. Sizes scale with the system Dynamic Type setting
- * (React Native's allowFontScaling is on by default); the biggest styles
- * cap their multiplier so layouts don't break at the largest sizes.
+ * Type scale. Sizes follow the system text size (Dynamic Type on iOS);
+ * the largest styles cap their growth so layouts hold.
  */
 export const type = {
-  display: { fontSize: 40, lineHeight: 46, fontWeight: '300' as const, letterSpacing: -0.5 },
-  title: { fontSize: 30, lineHeight: 36, fontWeight: '400' as const, letterSpacing: -0.3 },
-  heading: { fontSize: 22, lineHeight: 28, fontWeight: '500' as const },
-  body: { fontSize: 18, lineHeight: 26, fontWeight: '400' as const },
-  label: { fontSize: 16, lineHeight: 22, fontWeight: '600' as const, letterSpacing: 0.2 },
-  caption: { fontSize: 15, lineHeight: 20, fontWeight: '400' as const },
+  display: { fontFamily: fonts.serifLight, fontSize: 44, lineHeight: 50, letterSpacing: -0.3 },
+  title: { fontFamily: fonts.serif, fontSize: 34, lineHeight: 40, letterSpacing: -0.2 },
+  heading: { fontFamily: fonts.serifMedium, fontSize: 25, lineHeight: 30 },
+  quote: { fontFamily: fonts.serifItalic, fontSize: 22, lineHeight: 31 },
+  body: { fontFamily: fonts.sans, fontSize: 17, lineHeight: 26 },
+  label: { fontFamily: fonts.sansSemi, fontSize: 15, lineHeight: 20, letterSpacing: 0.3 },
+  caption: { fontFamily: fonts.sans, fontSize: 14, lineHeight: 20 },
   overline: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '600' as const,
-    letterSpacing: 1.6,
-    textTransform: 'uppercase' as const,
+    fontFamily: fonts.sansSemi,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 2.4,
+    textTransform: 'uppercase',
   },
-  timer: { fontSize: 64, lineHeight: 72, fontWeight: '200' as const, fontVariant: ['tabular-nums' as const] },
-};
+  timer: { fontFamily: fonts.serifLight, fontSize: 80, lineHeight: 86, fontVariant: ['tabular-nums'] },
+} satisfies Record<string, TextStyle>;
 
 export type TypeVariant = keyof typeof type;
 
 export const maxScale: Partial<Record<TypeVariant, number>> = {
-  display: 1.4,
-  title: 1.5,
-  timer: 1.3,
+  display: 1.35,
+  title: 1.4,
+  timer: 1.25,
+  quote: 1.5,
 };
 
 export const space = {
@@ -92,9 +68,15 @@ export const space = {
 export const radius = {
   sm: 12,
   md: 18,
-  lg: 28,
+  lg: 26,
   pill: 999,
 } as const;
 
 /** Minimum touch target (Apple HIG is 44pt; we go larger for calm UI). */
 export const touch = 52;
+
+/** Slow, soft motion timings (ms). */
+export const motion = {
+  fade: 700,
+  settle: 900,
+} as const;

@@ -1,14 +1,15 @@
 import { NativeTabs } from 'expo-router/native-tabs';
 
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 /** Native iOS tab bar. The web build uses AppTabs.web.tsx. */
 export function AppTabs() {
+  const { c } = useTheme();
   return (
     <NativeTabs
-      tintColor={colors.violet}
-      iconColor={{ default: colors.textFaint, selected: colors.violet }}
-      labelStyle={{ default: { color: colors.textFaint }, selected: { color: colors.text } }}>
+      tintColor={c.calm}
+      iconColor={{ default: c.textFaint, selected: c.calm }}
+      labelStyle={{ default: { color: c.textFaint }, selected: { color: c.text } }}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />

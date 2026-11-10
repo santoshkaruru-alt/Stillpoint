@@ -1,25 +1,42 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { sessionPlans } from '@content/sessionPlans';
 import { AppText } from '@/components/AppText';
-import { Card, PathCard } from '@/components/Card';
+import { Card, CardGroup } from '@/components/Card';
+import { Icon } from '@/components/Icon';
 import { MoodPicker } from '@/components/MoodPicker';
 import { Screen } from '@/components/Screen';
 import { startMeditation } from '@/lib/navigation';
 import { useSettings } from '@/store/settings';
-import { accentColor, colors, radius, space } from '@/theme';
+import { makeStyles, space, useTheme } from '@/theme';
+
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+    header: { gap: space.xs, paddingTop: space.lg },
+    intention: { gap: space.sm },
+    intentionTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    session: { flexDirection: 'row', alignItems: 'center', gap: space.lg, paddingHorizontal: space.lg, paddingVertical: space.lg },
+    minutes: { width: 58, alignItems: 'center' },
+    minutesNum: { fontSize: 46, lineHeight: 48, color: c.calm },
+    sessionText: { flex: 1, gap: 2 },
+    pressed: { opacity: 0.7 },
+    note: { paddingHorizontal: space.md },
+  }),
+);
 
 export default function MeditateTab() {
+  const styles = useStyles();
+  const { c } = useTheme();
   const intention = useSettings((s) => s.intention);
   const [mood, setMood] = useState<number | null>(null);
   const hasIntention = !!(intention.identity || intention.emotion || intention.scene);
 
   return (
-    <Screen accent="violet">
+    <Screen accent="calm" glowY={0.08}>
       <View style={styles.header}>
-        <AppText variant="overline" tone="violet">
+        <AppText variant="overline" tone="calm">
           Meditate
         </AppText>
         <AppText variant="display" accessibilityRole="header">
@@ -27,67 +44,60 @@ export default function MeditateTab() {
         </AppText>
       </View>
 
-      <PathCard
-        title={hasIntention ? 'Your intention' : 'Set your intention'}
-        subtitle={
-          hasIntention
-            ? [intention.identity && `Becoming ${intention.identity}`, intention.emotion && `Feeling ${intention.emotion}`]
-                .filter(Boolean)
-                .join(' · ') || 'Your future scene is ready'
-            : 'Who you are becoming, how it feels, one future scene'
-        }
-        icon="scope"
-        accent="amber"
-        compact
-        onPress={() => router.push('/intention')}
-        accessibilityHint="Opens the intention builder"
-      />
+      <Pressable onPress={() => router.push('/intention')} accessibilityRole="button" accessibilityHint="Opens the intention builder">
+        {({ pressed }) => (
+          <Card style={[styles.intention, pressed && styles.pressed]}>
+            <View style={styles.intentionTop}>
+              <AppText variant="overline" tone="warm">
+                {hasIntention ? 'Your intention' : 'Set your intention'}
+              </AppText>
+              <Icon name="pencil" size={16} color={c.textFaint} />
+            </View>
+            <AppText variant="quote" tone={hasIntention ? 'default' : 'muted'}>
+              {hasIntention
+                ? [intention.identity && `Becoming ${intention.identity}.`, intention.emotion && `Feeling ${intention.emotion}.`].filter(Boolean).join(' ') ||
+                  'Your future scene is ready.'
+                : 'Who you are becoming, how it feels, and one moment from your future.'}
+            </AppText>
+          </Card>
+        )}
+      </Pressable>
 
-      <View style={styles.list}>
+      <CardGroup>
         {sessionPlans.map((p) => (
-          <PathCard
+          <Pressable
             key={p.lengthMin}
-            title={p.name}
-            subtitle={p.description}
-            accent="violet"
             onPress={() => startMeditation(p.lengthMin, 0, mood)}
-            accessibilityHint={`Starts the ${p.lengthMin} minute session`}
-            right={
-              <View style={styles.minutes}>
-                <AppText variant="heading" tone="violet">
-                  {p.lengthMin}
-                </AppText>
-                <AppText variant="caption" tone="faint">
-                  min
-                </AppText>
-              </View>
-            }
-          />
+            accessibilityRole="button"
+            accessibilityLabel={`${p.name}, ${p.lengthMin} minutes. ${p.description}`}
+            accessibilityHint="Starts this session"
+            style={({ pressed }) => [styles.session, pressed && styles.pressed]}>
+            <View style={styles.minutes}>
+              <AppText variant="display" style={styles.minutesNum}>
+                {p.lengthMin}
+              </AppText>
+              <AppText variant="overline" tone="faint">
+                min
+              </AppText>
+            </View>
+            <View style={styles.sessionText}>
+              <AppText variant="heading">{p.name}</AppText>
+              <AppText variant="caption" tone="muted">
+                {p.description}
+              </AppText>
+            </View>
+            <Icon name="play.fill" size={14} color={c.calm} />
+          </Pressable>
         ))}
-      </View>
+      </CardGroup>
 
       <Card>
-        <MoodPicker label="How do you feel before you begin?" value={mood} onChange={setMood} accent="violet" />
+        <MoodPicker label="Before you begin, how do you feel?" value={mood} onChange={setMood} accent="calm" />
       </Card>
 
-      <AppText variant="caption" tone="faint" center>
-        Use headphones for the best experience. Sit or lie somewhere safe and comfortable.
+      <AppText variant="caption" tone="faint" center style={styles.note}>
+        Headphones recommended. Sit or lie somewhere safe and comfortable.
       </AppText>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: { gap: space.sm, paddingTop: space.xl },
-  list: { gap: space.md },
-  minutes: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: `${accentColor.violet}55`,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

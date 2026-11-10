@@ -1,14 +1,54 @@
 import type { SFSymbol } from 'expo-symbols';
-import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { Children, Fragment, isValidElement, type ReactNode } from 'react';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { accentColor, colors, radius, space, type Accent } from '@/theme';
+import { makeStyles, radius, space, useTheme, type Accent } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 
-export function Card({ children, style }: { children: ReactNode; style?: ViewStyle }) {
+const useStyles = makeStyles((c) =>
+  StyleSheet.create({
+  card: {
+    backgroundColor: c.surface,
+    borderColor: c.line,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radius.lg,
+    padding: space.lg,
+    ...(c.scheme === 'light'
+      ? { shadowColor: c.shadow, shadowOpacity: 0.06, shadowRadius: 24, shadowOffset: { width: 0, height: 10 } }
+      : {}),
+  },
+  group: { paddingVertical: space.xs, paddingHorizontal: 0 },
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: c.line, marginLeft: space.lg + 44 + space.md },
+  path: { flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 88 },
+  bare: { paddingHorizontal: space.lg, paddingVertical: space.md },
+  compact: { minHeight: 72 },
+  pressed: { opacity: 0.7 },
+  iconWrap: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  text: { flex: 1, gap: 2 },
+  }),
+);
+
+export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const styles = useStyles();
   return <View style={[styles.card, style]}>{children}</View>;
+}
+
+/** A card holding several rows separated by hairlines. */
+export function CardGroup({ children }: { children: ReactNode }) {
+  const styles = useStyles();
+  const items = Children.toArray(children).filter(isValidElement);
+  return (
+    <View style={[styles.card, styles.group]}>
+      {items.map((child, i) => (
+        <Fragment key={child.key ?? i}>
+          {i > 0 ? <View style={styles.divider} /> : null}
+          {child}
+        </Fragment>
+      ))}
+    </View>
+  );
 }
 
 interface PathCardProps {
@@ -20,20 +60,30 @@ interface PathCardProps {
   right?: ReactNode;
   accessibilityHint?: string;
   compact?: boolean;
+  /** Render as a row inside a CardGroup rather than its own card. */
+  bare?: boolean;
 }
 
-/** Large tappable card used for the main paths and session choices. */
-export function PathCard({ title, subtitle, icon, accent = 'violet', onPress, right, accessibilityHint, compact }: PathCardProps) {
+/** Large tappable row used for the main paths and session choices. */
+export function PathCard({ title, subtitle, icon, accent = 'calm', onPress, right, accessibilityHint, compact, bare }: PathCardProps) {
+  const styles = useStyles();
+  const { c } = useTheme();
+  const soft = { calm: c.calmSoft, breath: c.breathSoft, warm: c.warmSoft }[accent];
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={subtitle ? `${title}. ${subtitle}` : title}
       accessibilityHint={accessibilityHint}
-      style={({ pressed }) => [styles.card, styles.path, compact && styles.compact, pressed && styles.pressed]}>
+      style={({ pressed }) => [
+        bare ? styles.bare : styles.card,
+        styles.path,
+        compact && styles.compact,
+        pressed && styles.pressed,
+      ]}>
       {icon ? (
-        <View style={[styles.iconWrap, { backgroundColor: `${accentColor[accent]}22`, borderColor: `${accentColor[accent]}55` }]}>
-          <Icon name={icon} size={26} color={accentColor[accent]} />
+        <View style={[styles.iconWrap, { backgroundColor: soft }]}>
+          <Icon name={icon} size={22} color={c[accent]} />
         </View>
       ) : null}
       <View style={styles.text}>
@@ -44,29 +94,7 @@ export function PathCard({ title, subtitle, icon, accent = 'violet', onPress, ri
           </AppText>
         ) : null}
       </View>
-      {right ?? <Icon name="chevron.right" size={16} color={colors.textFaint} />}
+      {right ?? <Icon name="chevron.right" size={14} color={c.textFaint} />}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'rgba(26, 27, 68, 0.72)',
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: radius.lg,
-    padding: space.lg,
-  },
-  path: { flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 96 },
-  compact: { minHeight: 76, paddingVertical: space.md },
-  pressed: { opacity: 0.85, transform: [{ scale: 0.985 }] },
-  iconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: { flex: 1, gap: 2 },
-});

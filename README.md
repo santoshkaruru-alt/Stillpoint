@@ -17,6 +17,9 @@ future self, then gently back. All scripts, names and sounds are original.
 - **Journal**: mood before and after, notes, streaks, minutes, a calendar and a
   breath-hold trend chart
 - **Reminders** (native app only): optional morning and evening nudges
+- **Calm, premium design**: Cormorant Garamond and Manrope type, a brushed ensō,
+  soft light and ripples, and three nature palettes (Sage, Sand, Mist), each in
+  light and dark. Choose in Settings > Appearance, or follow your phone.
 - **Safety first**: an acknowledgement on first launch and before intense
   breathwork, and a large Stop button on every breath screen
 
@@ -242,7 +245,7 @@ stillpoint/
     ├── services/        Haptics, notifications
     ├── components/      UI building blocks
     ├── models/types.ts  Session, Segment, BreathPattern, JournalEntry, ...
-    └── theme/           Colours, type scale, spacing
+    └── theme/           Palettes (light + dark), type scale, spacing, ThemeProvider
 ```
 
 Web and native share all screens and logic. Where a platform needs something

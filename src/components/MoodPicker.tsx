@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { accentColor, colors, radius, space, type Accent } from '@/theme';
+import { radius, space, useTheme, type Accent } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -25,7 +25,9 @@ interface Props {
 }
 
 /** 1 to 10 mood check-in. Tap the selected value again to clear it. */
-export function MoodPicker({ value, onChange, label, accent = 'amber' }: Props) {
+export function MoodPicker({ value, onChange, label, accent = 'warm' }: Props) {
+  const { c } = useTheme();
+  const soft = { calm: c.calmSoft, breath: c.breathSoft, warm: c.warmSoft }[accent];
   return (
     <View style={styles.wrap}>
       <View style={styles.labelRow}>
@@ -49,8 +51,11 @@ export function MoodPicker({ value, onChange, label, accent = 'amber' }: Props) 
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}
                   accessibilityLabel={`${n}, ${moodWords[n]}`}
-                  style={[styles.cell, selected && { backgroundColor: accentColor[accent], borderColor: accentColor[accent] }]}>
-                  <AppText variant="label" style={{ color: selected ? colors.onAccent : colors.text }}>
+                  style={[
+                    styles.cell,
+                    { borderColor: selected ? c[accent] : c.lineStrong, backgroundColor: selected ? soft : 'transparent' },
+                  ]}>
+                  <AppText variant="heading" style={{ color: selected ? c[accent] : c.textSoft }}>
                     {n}
                   </AppText>
                 </Pressable>
@@ -64,18 +69,16 @@ export function MoodPicker({ value, onChange, label, accent = 'amber' }: Props) 
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: space.sm },
+  wrap: { gap: space.md },
   labelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   grid: { gap: space.sm },
   row: { flexDirection: 'row', gap: space.sm },
   cell: {
     flex: 1,
-    minHeight: 48,
-    borderRadius: radius.sm,
+    minHeight: 50,
+    borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.surface,
   },
 });

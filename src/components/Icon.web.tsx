@@ -1,6 +1,6 @@
 import Svg, { Circle, Path } from 'react-native-svg';
 
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 /**
  * Web stand-ins for the SF Symbols used by the native app. Simple 24x24
@@ -72,14 +72,16 @@ interface Props {
   color?: string;
 }
 
-export function Icon({ name, size = 22, color = colors.text }: Props) {
+export function Icon({ name, size = 22, color: colorProp }: Props) {
+  const { c } = useTheme();
+  const color = colorProp ?? c.text;
   const g = glyphs[alias[name] ?? name] ?? { filledCircles: [[12, 12, 3]] };
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" accessibilityElementsHidden importantForAccessibility="no" pointerEvents="none">
-      {g.d ? <Path d={g.d} stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none" /> : null}
+      {g.d ? <Path d={g.d} stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" fill="none" /> : null}
       {g.fill ? <Path d={g.fill} fill={color} /> : null}
       {g.circles?.map(([cx, cy, r]) => (
-        <Circle key={`${cx}-${cy}-${r}`} cx={cx} cy={cy} r={r} stroke={color} strokeWidth={1.8} fill="none" />
+        <Circle key={`${cx}-${cy}-${r}`} cx={cx} cy={cy} r={r} stroke={color} strokeWidth={1.5} fill="none" />
       ))}
       {g.filledCircles?.map(([cx, cy, r]) => (
         <Circle key={`f${cx}-${cy}-${r}`} cx={cx} cy={cy} r={r} fill={color} />
