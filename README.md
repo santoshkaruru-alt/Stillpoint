@@ -16,7 +16,14 @@ future self, then gently back. All scripts, names and sounds are original.
   retention timer that logs each hold
 - **Journal**: mood before and after, notes, streaks, minutes, a calendar and a
   breath-hold trend chart
-- **Reminders** (native app only): optional morning and evening nudges
+- **Silent timer**: unguided sits of 5 to 60 minutes with a bell to begin and end,
+  optional interval bells and ambient sound
+- **Reminders**: in the web app, a daily repeating event added to your phone's
+  Calendar (Settings > Reminders); in the native app, morning and evening
+  notifications
+- **Back up and restore**: save everything to one file (Settings > Your data) and
+  restore it on another phone or after reinstalling; restoring never deletes
+  anything
 - **Calm, premium design**: Cormorant Garamond and Manrope type, a brushed ensō,
   soft light and ripples, and three nature palettes (Sage, Sand, Mist), each in
   light and dark. Choose in Settings > Appearance, or follow your phone.
@@ -47,6 +54,11 @@ The built app is committed in `docs/`, so Pages only needs to serve that folder:
    branch*, Branch `main`, folder **`/docs`**. Save.
 2. After a minute or two, open the link above.
 
+**Keep a backup.** Your history lives inside the home-screen icon: deleting the
+icon deletes it. Use **Settings > Your data > Back up** now and then, and keep the
+file in Files or iCloud Drive. To move to a new icon or phone: back up, add the
+new icon, then **Restore from backup**.
+
 ### What the web app can and can't do
 
 | | Web app (iPhone Safari) | Native app (later) |
@@ -56,7 +68,7 @@ The built app is committed in `docs/`, so Pages only needs to serve that folder:
 | Ambient sound, binaural tones, cues | Yes | Yes |
 | Works offline, own home-screen icon | Yes | Yes |
 | Haptic breath cues | Limited: Android yes; iPhone may give light taps on iOS 18+, not guaranteed | Yes |
-| Daily reminders | No: browsers can't schedule local notifications | Yes |
+| Daily reminders | Yes, as a repeating event in your Calendar | Yes, as notifications |
 | Keeps going with the screen locked | No: the session pauses; tap Resume | Partly (see below) |
 
 During a session the app keeps the screen awake and dims it (tap to wake).

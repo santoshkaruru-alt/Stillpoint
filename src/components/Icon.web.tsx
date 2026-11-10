@@ -56,6 +56,12 @@ const glyphs: Record<string, Glyph> = {
   drop: { d: 'M12 3.5c-3 4.5-6 7.5-6 11a6 6 0 0 0 12 0c0-3.5-3-6.5-6-11z' },
   'figure.seated.side': { d: 'M9 7.5v6h6l2 6.5M9 13.5 7 20M9 10h4', circles: [[9, 4.5, 2]] },
   stethoscope: { d: 'M6 3v6a4 4 0 0 0 8 0V3M10 13v3a4 4 0 0 0 8 0v-2.5', circles: [[18, 11.5, 2]] },
+  'square.and.arrow.up': { d: 'M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1' },
+  'square.and.arrow.down': { d: 'M12 3v12M8 11l4 4 4-4M6 9H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-1' },
+  bell: { d: 'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0' },
+  timer: { d: 'M12 13V9M10 2.5h4', circles: [[12, 13, 8]] },
+  calendar: { d: 'M4 6.5h16V20H4zM4 10.5h16M8 4v4M16 4v4' },
+  'moon.zzz': { d: 'M18.5 14.5A7 7 0 1 1 9.5 5.5a5.5 5.5 0 0 0 9 9z' },
   'play.circle': { d: 'M10 8.5v7l5.5-3.5z', circles: [[12, 12, 9]] },
 };
 

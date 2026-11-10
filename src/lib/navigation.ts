@@ -32,3 +32,8 @@ export function continueLastSession() {
   if (last.kind === 'meditation') startMeditation(last.lengthMin, last.segmentIndex);
   else startBreath(last.patternId, last.intense);
 }
+
+/** Start a silent, unguided sit. */
+export function startTimer(minutes: number) {
+  router.push({ pathname: '/timer/[minutes]', params: { minutes: String(minutes) } });
+}

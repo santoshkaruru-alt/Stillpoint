@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Stillpoint//Daily reminder//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:stillpoint-daily-0500@stillpoint.app
+DTSTAMP:20260101T000000Z
+DTSTART:20260101T050000
+DURATION:PT10M
+RRULE:FREQ=DAILY
+SUMMARY:Stillpoint · a few quiet minutes
+DESCRIPTION:Time to breathe. Open Stillpoint: https://santoshkaruru-alt.git
+ hub.io/Stillpoint/
+URL:https://santoshkaruru-alt.github.io/Stillpoint/
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Time for a few quiet minutes
+TRIGGER:PT0M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

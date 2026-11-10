@@ -24,6 +24,7 @@ const types = {
   '.wav': 'audio/wav',
   '.css': 'text/css',
   '.ttf': 'font/ttf',
+  '.ics': 'text/calendar; charset=utf-8',
 };
 
 if (!existsSync(join(root, 'index.html'))) {

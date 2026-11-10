@@ -69,6 +69,7 @@ function AppStack({ ready }: { ready: boolean }) {
           <Stack.Screen name="session/[length]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           <Stack.Screen name="session/complete" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           <Stack.Screen name="breath/[pattern]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
+          <Stack.Screen name="timer/[minutes]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           <Stack.Screen name="breath/builder" options={{ presentation: 'modal' }} />
           <Stack.Screen name="breath/safety" options={{ presentation: 'modal' }} />
           <Stack.Screen name="intention" options={{ presentation: 'modal' }} />

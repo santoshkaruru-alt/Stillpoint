@@ -5,6 +5,7 @@
  */
 import { create } from 'zustand';
 
+import { mergeById } from '@/lib/backupFormat';
 import type { BreathHold, JournalEntry, PracticeLog } from '@/models/types';
 
 export const useDataVersion = create<{ v: number; bump: () => void }>((set) => ({
@@ -99,4 +100,17 @@ export function clearAllData() {
     }
   }
   useDataVersion.getState().bump();
+}
+
+// ---------------------------------------------------------- backup / restore
+
+export function exportHistory(): { practices: PracticeLog[]; journal: JournalEntry[]; holds: BreathHold[] } {
+  return { practices: read<PracticeLog>(KEYS.practices), journal: read<JournalEntry>(KEYS.journal), holds: read<BreathHold>(KEYS.holds) };
+}
+
+/** Add or update rows from a backup. Nothing is deleted. */
+export function importHistory(data: { practices: PracticeLog[]; journal: JournalEntry[]; holds: BreathHold[] }) {
+  write(KEYS.practices, mergeById(read<PracticeLog>(KEYS.practices), data.practices));
+  write(KEYS.journal, mergeById(read<JournalEntry>(KEYS.journal), data.journal));
+  write(KEYS.holds, mergeById(read<BreathHold>(KEYS.holds), data.holds));
 }

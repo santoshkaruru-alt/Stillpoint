@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { Alert, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
@@ -9,6 +9,7 @@ import { HistoryCalendar } from '@/components/HistoryCalendar';
 import { HoldChart } from '@/components/HoldChart';
 import { moodWords } from '@/components/MoodPicker';
 import { Screen } from '@/components/Screen';
+import { confirmAsync } from '@/lib/dialog';
 import { deleteJournal, listHolds, listJournal, listPractices, useDataVersion } from '@/db';
 import { averageMoodLift, currentStreak, holdTrend, longestStreak, minutesByDay, practiceDays, totalMinutes } from '@/engine/stats';
 import type { JournalEntry, PracticeLog } from '@/models/types';
@@ -118,10 +119,7 @@ function EntryRow({ entry, practice }: { entry: JournalEntry; practice?: Practic
           : null;
 
   const confirmDelete = () =>
-    Alert.alert('Delete this entry?', undefined, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteJournal(entry.id) },
-    ]);
+    void confirmAsync('Delete this entry?', undefined, 'Delete', true).then((ok) => ok && deleteJournal(entry.id));
 
   return (
     <Pressable onLongPress={confirmDelete} accessibilityHint="Long press to delete" accessibilityActions={[{ name: 'delete', label: 'Delete entry' }]} onAccessibilityAction={confirmDelete}>

@@ -213,3 +213,35 @@ export function clearAllData() {
   getDb().execSync('DELETE FROM practices; DELETE FROM journal; DELETE FROM breath_holds;');
   bump();
 }
+
+// ---------------------------------------------------------- backup / restore
+
+export function exportHistory(): { practices: PracticeLog[]; journal: JournalEntry[]; holds: BreathHold[] } {
+  return { practices: listPractices(), journal: listJournal(1_000_000), holds: listHolds(1_000_000) };
+}
+
+/** Add or update rows from a backup. Nothing is deleted. */
+export function importHistory(data: { practices: PracticeLog[]; journal: JournalEntry[]; holds: BreathHold[] }) {
+  const d = getDb();
+  d.withTransactionSync(() => {
+    for (const p of data.practices) {
+      d.runSync(
+        `INSERT OR REPLACE INTO practices (id, kind, ref_id, title, started_at, duration_sec, completed) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        p.id, p.kind, p.refId, p.title, p.startedAt, Math.round(p.durationSec), p.completed ? 1 : 0,
+      );
+    }
+    for (const e of data.journal) {
+      d.runSync(
+        `INSERT OR REPLACE INTO journal (id, created_at, practice_id, mood_before, mood_after, note) VALUES (?, ?, ?, ?, ?, ?)`,
+        e.id, e.createdAt, e.practiceId ?? null, e.moodBefore ?? null, e.moodAfter ?? null, e.note ?? '',
+      );
+    }
+    for (const h of data.holds) {
+      d.runSync(
+        `INSERT OR REPLACE INTO breath_holds (id, practice_id, pattern_id, round, seconds, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        h.id, h.practiceId, h.patternId, h.round, h.seconds, h.createdAt,
+      );
+    }
+  });
+  bump();
+}

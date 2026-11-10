@@ -49,6 +49,16 @@ export interface SettingsState {
   reduceMotion: ReduceMotionPref;
   dimDuringSession: boolean;
 
+  // Silent timer
+  timerIntervalMin: number; // 0 = no interval bells
+  timerBed: AmbientBedId;
+
+  // Calendar reminder time on the web (minutes after midnight)
+  calendarReminderMin: number;
+
+  // Data
+  lastBackupAt: number | null;
+
   // Content state
   intention: Intention;
   lastSession: LastSession | null;
@@ -83,6 +93,11 @@ export const useSettings = create<SettingsState>()(
       themeName: 'sage',
       reduceMotion: 'system',
       dimDuringSession: true,
+
+      timerIntervalMin: 0,
+      timerBed: 'drift',
+      calendarReminderMin: 7 * 60,
+      lastBackupAt: null,
 
       intention: defaultIntention,
       lastSession: null,

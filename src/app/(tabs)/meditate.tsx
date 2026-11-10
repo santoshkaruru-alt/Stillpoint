@@ -8,6 +8,7 @@ import { Card, CardGroup } from '@/components/Card';
 import { Icon } from '@/components/Icon';
 import { MoodPicker } from '@/components/MoodPicker';
 import { Screen } from '@/components/Screen';
+import { SilentTimerCard } from '@/components/SilentTimerCard';
 import { startMeditation } from '@/lib/navigation';
 import { useSettings } from '@/store/settings';
 import { makeStyles, space, useTheme } from '@/theme';
@@ -90,6 +91,8 @@ export default function MeditateTab() {
           </Pressable>
         ))}
       </CardGroup>
+
+      <SilentTimerCard />
 
       <Card>
         <MoodPicker label="Before you begin, how do you feel?" value={mood} onChange={setMood} accent="calm" />

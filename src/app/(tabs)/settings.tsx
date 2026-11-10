@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { bedLabels, binauralLabels } from '@/audio/ambient';
 import { listVoices, previewVoice, type VoiceOption } from '@/audio/voice/DeviceTTSProvider';
@@ -10,16 +10,28 @@ import { Icon } from '@/components/Icon';
 import { Segmented } from '@/components/Segmented';
 import { Field, Section, ToggleRow } from '@/components/SettingRow';
 import { Screen } from '@/components/Screen';
+import { CalendarReminder } from '@/components/CalendarReminder';
 import { Stepper } from '@/components/Stepper';
 import { ThemePicker } from '@/components/ThemePicker';
 import type { AmbientBedId } from '@/models/types';
 import { clearAllData } from '@/db';
+import { confirmAsync, notify } from '@/lib/dialog';
+import { BackupError, parseBackup, summarize } from '@/lib/backupFormat';
 import { isWeb } from '@/lib/platformSetup';
+import { applyBackup, pickBackupText, saveBackup } from '@/services/backup';
 import { ensurePermission, remindersSupported, syncReminders } from '@/services/notifications';
 import { useSettings, type ReminderSettings } from '@/store/settings';
 import { space, useTheme } from '@/theme';
 
 const pct = (v: number) => `${Math.round(v * 100)}%`;
+
+function sinceLabel(ts: number): string {
+  const days = Math.floor((Date.now() - ts) / 86_400_000);
+  if (days <= 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 30) return `${days} days ago`;
+  return `on ${new Date(ts).toLocaleDateString()}`;
+}
 
 function formatTime(mins: number): string {
   const d = new Date(2000, 0, 1, Math.floor(mins / 60), mins % 60);
@@ -42,14 +54,11 @@ export default function SettingsTab() {
 
   const toggleBinaural = (on: boolean) => {
     if (on && !s.binauralNoticeSeen) {
-      Alert.alert(
+      void confirmAsync(
         'Use headphones',
         'Binaural tones play a slightly different pitch in each ear. They only work with headphones, and should be kept quiet. Skip them if you have epilepsy or a seizure history.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Turn on', onPress: () => s.set({ binauralEnabled: true, binauralNoticeSeen: true }) },
-        ],
-      );
+        'Turn on',
+      ).then((ok) => ok && useSettings.getState().set({ binauralEnabled: true, binauralNoticeSeen: true }));
       return;
     }
     s.set({ binauralEnabled: on });
@@ -59,7 +68,7 @@ export default function SettingsTab() {
     const next = { ...s.reminders, ...patch };
     const turningOn = (patch.morningEnabled && !s.reminders.morningEnabled) || (patch.eveningEnabled && !s.reminders.eveningEnabled);
     if (turningOn && !(await ensurePermission())) {
-      Alert.alert('Notifications are off', 'To get reminders, allow notifications for this app in the iPhone Settings app.');
+      notify('Notifications are off', 'To get reminders, allow notifications for this app in the iPhone Settings app.');
       return;
     }
     s.set({ reminders: next });
@@ -71,6 +80,29 @@ export default function SettingsTab() {
   };
 
   const r = s.reminders;
+
+  const backUp = () => {
+    saveBackup().catch((e) => notify('Backup failed', String((e as Error).message ?? e)));
+  };
+
+  const restore = async () => {
+    const text = await pickBackupText().catch(() => null);
+    if (!text) return;
+    try {
+      const b = parseBackup(text);
+      const when = b.exportedAt ? new Date(b.exportedAt).toLocaleDateString() : 'an unknown date';
+      const ok = await confirmAsync(
+        'Restore this backup?',
+        `From ${when}: ${summarize(b)}. Nothing on this device is deleted; matching items are updated.`,
+        'Restore',
+      );
+      if (!ok) return;
+      applyBackup(b);
+      notify('Restored', summarize(b));
+    } catch (e) {
+      notify('Could not restore', e instanceof BackupError ? e.message : 'That file could not be read.');
+    }
+  };
 
   return (
     <Screen>
@@ -99,6 +131,12 @@ export default function SettingsTab() {
           <ThemePicker value={s.themeName} onChange={(t) => s.set({ themeName: t })} />
         </Field>
       </Section>
+
+      {isWeb ? (
+        <Section title="Reminders">
+          <CalendarReminder />
+        </Section>
+      ) : null}
 
       {remindersSupported ? (
       <Section title="Reminders">
@@ -279,8 +317,20 @@ export default function SettingsTab() {
         />
       </Section>
 
-      <Section title="Safety and data">
-        <Button label="Safety guidance" icon="exclamationmark.shield" kind="secondary" size="md" onPress={() => router.push('/safety')} />
+      <Section title="Your data">
+        <View style={styles.dataRow}>
+          <View style={styles.flex}>
+            <AppText variant="label">Back up</AppText>
+            <AppText variant="caption" tone="faint">
+              {s.lastBackupAt ? `Last backup ${sinceLabel(s.lastBackupAt)}` : 'Not backed up yet'}
+            </AppText>
+          </View>
+          <Button label="Back up" icon="square.and.arrow.up" kind="secondary" size="md" onPress={backUp} />
+        </View>
+        <AppText variant="caption" tone="faint">
+          Saves your journal, sessions, breath holds, patterns and settings to one file. Keep it in Files or iCloud Drive.
+        </AppText>
+        <Button label="Restore from backup" icon="square.and.arrow.down" kind="secondary" size="md" onPress={restore} />
         <AppText variant="caption" tone="faint">
           Everything you write and every session you log stays on this phone. Nothing is uploaded.
         </AppText>
@@ -290,12 +340,18 @@ export default function SettingsTab() {
           kind="ghost"
           size="md"
           onPress={() =>
-            Alert.alert('Clear all history?', 'This deletes your sessions, breath holds and journal entries. Settings and your intention are kept.', [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Clear', style: 'destructive', onPress: clearAllData },
-            ])
+            void confirmAsync(
+              'Clear all history?',
+              'This deletes your sessions, breath holds and journal entries. Settings and your intention are kept. Back up first if you might want them later.',
+              'Clear',
+              true,
+            ).then((ok) => ok && clearAllData())
           }
         />
+      </Section>
+
+      <Section title="Safety">
+        <Button label="Safety guidance" icon="exclamationmark.shield" kind="secondary" size="md" onPress={() => router.push('/safety')} />
       </Section>
 
       <AppText variant="caption" tone="faint" center>
@@ -311,4 +367,5 @@ const styles = StyleSheet.create({
   voiceRow: { flexDirection: 'row', alignItems: 'center', minHeight: 52, gap: space.md },
   voiceList: { gap: space.xs },
   voiceOption: { flexDirection: 'row', alignItems: 'center', minHeight: 44, gap: space.md },
+  dataRow: { flexDirection: 'row', alignItems: 'center', gap: space.md },
 });
