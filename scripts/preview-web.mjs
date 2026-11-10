@@ -12,7 +12,7 @@ import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
-const base = (process.env.STILLPOINT_BASE_URL ?? '/stillpoint').replace(/\/$/, '');
+const base = (process.env.STILLPOINT_BASE_URL ?? '/Stillpoint').replace(/\/$/, '');
 const port = Number(process.env.PORT ?? 8090);
 const types = {
   '.html': 'text/html; charset=utf-8',

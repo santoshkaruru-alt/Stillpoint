@@ -25,9 +25,17 @@
     </style>
   <meta name="theme-color" content="#07071A">
 <meta name="description" content="Guided meditation and breathwork">
-<link rel="icon" href="/stillpoint/favicon.ico"/>
-    <link rel="manifest" href="/stillpoint/manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="/stillpoint/icons/apple-touch-icon.png" />
+<link rel="icon" href="/Stillpoint/favicon.ico"/>
+    <script>
+      (function () {
+        var b = "/Stillpoint/", p = location.pathname;
+        if (p.indexOf(b) !== 0 && (p + '/').toLowerCase().indexOf(b.toLowerCase()) === 0) {
+          location.replace(b + p.slice(b.length) + location.search + location.hash);
+        }
+      })();
+    </script>
+    <link rel="manifest" href="/Stillpoint/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/Stillpoint/icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Stillpoint" />
@@ -44,12 +52,12 @@
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/stillpoint/_expo/static/js/web/__common-d61fce99a0fe7b3e66746d5ee71fde02.js" defer></script><script src="/stillpoint/_expo/static/js/web/entry-03e601df300543c6ee174844df3b1dd9.js" defer></script>
+  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-3809bc3593cab4e1cb8e30beafbeff81.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-458dd5603334a789167910cf6dce74d6.js" defer></script>
 
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/stillpoint/sw.js', { scope: '/stillpoint/' }).catch(function () {});
+        navigator.serviceWorker.register('/Stillpoint/sw.js', { scope: '/Stillpoint/' }).catch(function () {});
       });
     }
   </script>

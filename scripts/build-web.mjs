@@ -5,7 +5,8 @@
  *   npm run build:web
  *
  * GitHub Pages serves ./docs from main, so the default base path is the
- * repository name:  https://<user>.github.io/stillpoint/
+ * repository name, with the exact capitals GitHub uses (paths are
+ * case-sensitive there):  https://<user>.github.io/Stillpoint/
  * Host it elsewhere by setting STILLPOINT_BASE_URL, e.g.
  *   STILLPOINT_BASE_URL=/ npm run build:web        (site root)
  *
@@ -20,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'docs');
-const base = (process.env.STILLPOINT_BASE_URL ?? '/stillpoint').replace(/\/$/, '');
+const base = (process.env.STILLPOINT_BASE_URL ?? '/Stillpoint').replace(/\/$/, '');
 const prefix = `${base}/`;
 
 console.log(`Building web app for ${prefix}`);
@@ -42,7 +43,21 @@ html = html.replace(
   '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />',
 );
 
-const head = `
+// Visitors who type the address with other capitals (e.g. /stillpoint/)
+// are sent to the exact path, otherwise the app's files would not load.
+const caseGuard = base
+  ? `
+    <script>
+      (function () {
+        var b = ${JSON.stringify(prefix)}, p = location.pathname;
+        if (p.indexOf(b) !== 0 && (p + '/').toLowerCase().indexOf(b.toLowerCase()) === 0) {
+          location.replace(b + p.slice(b.length) + location.search + location.hash);
+        }
+      })();
+    </script>`
+  : '';
+
+const head = `${caseGuard}
     <link rel="manifest" href="${prefix}manifest.webmanifest" />
     <link rel="apple-touch-icon" href="${prefix}icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />

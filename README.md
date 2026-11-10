@@ -28,7 +28,7 @@ server, no tracking.
 
 ## Use it on your iPhone: the web app
 
-**Live at:** https://santoshkaruru-alt.github.io/stillpoint/
+**Live at:** https://santoshkaruru-alt.github.io/Stillpoint/
 (once GitHub Pages is on, see below)
 
 1. Open the link in **Safari** on your iPhone.
@@ -66,7 +66,7 @@ on; on older versions, flip the switch if you hear nothing.
 ```bash
 npm install            # first time only
 npm run build:web      # rebuilds docs/
-npm run preview:web    # optional: try it at http://localhost:8090/stillpoint/
+npm run preview:web    # optional: try it at http://localhost:8090/Stillpoint/
 git add docs && git commit -m "Rebuild web app" && git push
 ```
 
@@ -95,8 +95,8 @@ and your iPhone on the **same Wi-Fi** network.
 2. On your computer:
 
    ```bash
-   git clone https://github.com/santoshkaruru-alt/stillpoint.git
-   cd stillpoint
+   git clone https://github.com/santoshkaruru-alt/Stillpoint.git
+   cd Stillpoint
    npm install
    npx expo start
    ```
