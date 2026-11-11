@@ -90,7 +90,7 @@ export const useSettings = create<SettingsState>()(
       breathSounds: true,
 
       appearance: 'system',
-      themeName: 'sage',
+      themeName: 'ocean',
       reduceMotion: 'system',
       dimDuringSession: true,
 
@@ -114,7 +114,13 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: 'stillpoint-settings',
-      version: 1,
+      version: 2,
+      // v2 replaced the Sage, Sand and Mist palettes with Ocean, Forest and Dusk.
+      migrate: (persisted, version) => {
+        const state = (persisted ?? {}) as Partial<SettingsState>;
+        if (version < 2) state.themeName = 'ocean';
+        return state as SettingsState;
+      },
       // Synchronous storage so settings are ready on the first render
       // (no flash of the safety screen for returning users).
       storage: kvStorage,

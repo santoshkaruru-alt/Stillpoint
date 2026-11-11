@@ -41,7 +41,7 @@ export default function JournalTab() {
   const chartWidth = width - space.lg * 2 - space.lg * 2;
 
   return (
-    <Screen accent="warm">
+    <Screen accent="warm" scene="forest" sceneHeight={300}>
       <View style={styles.header}>
         <AppText variant="overline" tone="warm">
           Journal
@@ -143,7 +143,7 @@ function EntryRow({ entry, practice }: { entry: JournalEntry; practice?: Practic
 
 const useStyles = makeStyles((c) =>
   StyleSheet.create({
-  header: { gap: space.xs, paddingTop: space.lg },
+  header: { gap: space.xs, paddingTop: space.md, paddingBottom: 150 },
   tileValue: { color: c.warm, fontSize: 38, lineHeight: 42 },
   tileLabel: { fontSize: 10, letterSpacing: 1.6 },
   tiles: { flexDirection: 'row', gap: space.sm },

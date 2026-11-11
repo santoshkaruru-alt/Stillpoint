@@ -6,7 +6,7 @@ import { planFor } from '@content/sessionPlans';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { CardGroup, PathCard } from '@/components/Card';
-import { Enso } from '@/components/Enso';
+import { themeScene } from '@/components/Scene';
 import { Screen } from '@/components/Screen';
 import { continueLastSession, startMeditation } from '@/lib/navigation';
 import { useSettings } from '@/store/settings';
@@ -25,18 +25,18 @@ function todayLabel(date = new Date()): string {
 }
 
 export default function Home() {
-  const { c } = useTheme();
-  const { width } = useWindowDimensions();
+  const { name } = useTheme();
+  const { height } = useWindowDimensions();
   const last = useSettings((s) => s.lastSession);
-  const ensoSize = Math.min(width * 0.62, 280);
+  const sceneHeight = Math.round(Math.min(560, Math.max(380, height * 0.6)));
 
   // Mornings suggest the short session; later, the 20 minute one.
   const suggested = planFor(new Date().getHours() < 12 ? 10 : 20)!;
 
   return (
-    <Screen glowY={0.16}>
+    <Screen scene={themeScene[name]} sceneHeight={sceneHeight}>
       <View style={styles.header}>
-        <AppText variant="overline" tone="faint">
+        <AppText variant="overline" tone="muted">
           {todayLabel()}
         </AppText>
         <AppText variant="display" accessibilityRole="header">
@@ -44,12 +44,12 @@ export default function Home() {
         </AppText>
       </View>
 
-      <View style={styles.hero}>
-        <Enso size={ensoSize} color={c.text} opacity={c.scheme === 'dark' ? 0.82 : 0.78} drift />
-        <AppText variant="quote" tone="muted" center style={styles.line}>
-          {lineForToday()}
-        </AppText>
-      </View>
+      {/* Let the landscape breathe */}
+      <View style={{ height: sceneHeight * 0.5 }} />
+
+      <AppText variant="quote" center style={styles.line}>
+        {lineForToday()}
+      </AppText>
 
       <View style={styles.begin}>
         <Button
@@ -80,8 +80,7 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: space.xs, paddingTop: space.lg },
-  hero: { alignItems: 'center', gap: space.lg, paddingVertical: space.md },
-  line: { maxWidth: 320 },
+  header: { gap: space.xs, paddingTop: space.md },
+  line: { maxWidth: 340, alignSelf: 'center' },
   begin: { gap: space.xs },
 });

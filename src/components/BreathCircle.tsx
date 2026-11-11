@@ -4,6 +4,7 @@ import Animated, { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, wi
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 
 import { SCALE_MIN } from '@/engine/breath';
+import { useSvgId } from '@/hooks/useSvgId';
 import { useTheme, withAlpha, type Accent } from '@/theme';
 
 interface Props {
@@ -29,6 +30,7 @@ interface Props {
  */
 export function BreathCircle({ size, scaleTo, durationSec, stepKey, paused, reduceMotion, accent = 'breath', progress, children }: Props) {
   const { c } = useTheme();
+  const sid = useSvgId();
   const color = c[accent];
   const scale = useSharedValue(SCALE_MIN);
 
@@ -79,13 +81,13 @@ export function BreathCircle({ size, scaleTo, durationSec, stepKey, paused, redu
       <Animated.View style={[StyleSheet.absoluteFill, coreStyle]} pointerEvents="none">
         <Svg width={size} height={size}>
           <Defs>
-            <RadialGradient id="pool" cx="50%" cy="45%" r="55%">
+            <RadialGradient id={sid('pool')} cx="50%" cy="45%" r="55%">
               <Stop offset="0" stopColor={color} stopOpacity={c.scheme === 'dark' ? 0.42 : 0.3} />
               <Stop offset="0.7" stopColor={color} stopOpacity={c.scheme === 'dark' ? 0.16 : 0.12} />
               <Stop offset="1" stopColor={color} stopOpacity={0.04} />
             </RadialGradient>
           </Defs>
-          <Circle cx={r} cy={r} r={r * 0.72} fill="url(#pool)" />
+          <Circle cx={r} cy={r} r={r * 0.72} fill={`url(#${sid('pool')})`} />
           <Circle cx={r} cy={r} r={r * 0.72} stroke={withAlpha(color, 0.75)} strokeWidth={1.5} fill="none" />
         </Svg>
       </Animated.View>

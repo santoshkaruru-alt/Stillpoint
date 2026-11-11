@@ -7,6 +7,7 @@ import { AppText } from '@/components/AppText';
 import { Card, CardGroup } from '@/components/Card';
 import { Icon } from '@/components/Icon';
 import { MoodPicker } from '@/components/MoodPicker';
+import { themeScene } from '@/components/Scene';
 import { Screen } from '@/components/Screen';
 import { SilentTimerCard } from '@/components/SilentTimerCard';
 import { startMeditation } from '@/lib/navigation';
@@ -15,7 +16,7 @@ import { makeStyles, space, useTheme } from '@/theme';
 
 const useStyles = makeStyles((c) =>
   StyleSheet.create({
-    header: { gap: space.xs, paddingTop: space.lg },
+    header: { gap: space.xs, paddingTop: space.md, paddingBottom: 150 },
     intention: { gap: space.sm },
     intentionTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     session: { flexDirection: 'row', alignItems: 'center', gap: space.lg, paddingHorizontal: space.lg, paddingVertical: space.lg },
@@ -29,13 +30,13 @@ const useStyles = makeStyles((c) =>
 
 export default function MeditateTab() {
   const styles = useStyles();
-  const { c } = useTheme();
+  const { c, name } = useTheme();
   const intention = useSettings((s) => s.intention);
   const [mood, setMood] = useState<number | null>(null);
   const hasIntention = !!(intention.identity || intention.emotion || intention.scene);
 
   return (
-    <Screen accent="calm" glowY={0.08}>
+    <Screen accent="calm" scene={themeScene[name]} sceneHeight={300}>
       <View style={styles.header}>
         <AppText variant="overline" tone="calm">
           Meditate

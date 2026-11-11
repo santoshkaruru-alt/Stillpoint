@@ -8,6 +8,7 @@ import { AppText } from '@/components/AppText';
 import { BreathCircle } from '@/components/BreathCircle';
 import { Button } from '@/components/Button';
 import { GlowBackground } from '@/components/GlowBackground';
+import { SceneBackdrop } from '@/components/SceneBackdrop';
 import { newId, savePractice, saveHolds } from '@/db';
 import {
   BreathRunner,
@@ -237,7 +238,7 @@ function Player({ pattern }: { pattern: BreathPattern }) {
   if (snap.finished) {
     return (
       <View style={styles.root}>
-        <GlowBackground accent="breath" glowY={0.4} glowX={0.5} />
+        <SceneBackdrop kind="sea" veil={0.5} />
         <SafeAreaView style={styles.safe}>
           <View style={styles.finished}>
             <AppText variant="overline" tone="breath">
@@ -268,7 +269,7 @@ function Player({ pattern }: { pattern: BreathPattern }) {
 
   return (
     <View style={styles.root}>
-      <GlowBackground accent="breath" glowY={0.42} glowX={0.5} pulse={false} ripples={false} />
+      <SceneBackdrop kind="sea" veil={0.42} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.top}>
           <AppText variant="overline" tone="breath">

@@ -13,8 +13,7 @@ import { DeviceTTSProvider } from '@/audio/voice/DeviceTTSProvider';
 import type { VoiceProvider } from '@/audio/voice/VoiceProvider';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
-import { Enso } from '@/components/Enso';
-import { GlowBackground } from '@/components/GlowBackground';
+import { SceneBackdrop } from '@/components/SceneBackdrop';
 import { Icon } from '@/components/Icon';
 import { newId, savePractice } from '@/db';
 import { assembleSession } from '@/engine/assemble';
@@ -237,7 +236,7 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
 
   return (
     <Pressable style={styles.root} onPress={touch} accessible={false}>
-      <GlowBackground accent="calm" glowY={0.36} glowX={0.5} pulse={!paused} ripples={false} />
+      <SceneBackdrop veil={0.28} animate={!paused} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.top}>
           <Pressable
@@ -258,9 +257,6 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
 
         <View style={styles.center}>
           <View style={styles.titleBlock}>
-            <View style={styles.ensoWrap} pointerEvents="none">
-              <Enso size={300} color={c.text} opacity={c.scheme === 'dark' ? 0.16 : 0.13} drift={!paused} />
-            </View>
             <AppText variant="overline" tone="faint" center>
               {segIndex + 1} of {session.segments.length}
             </AppText>
@@ -346,10 +342,10 @@ const useStyles = makeStyles((c) =>
   close: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   bar: { flexDirection: 'row', gap: 4, height: 4 },
   barPart: { height: 3, borderRadius: 2, backgroundColor: c.line },
-  center: { flex: 1, justifyContent: 'center', gap: space.sm },
+  center: { flex: 1, justifyContent: 'flex-start', gap: space.sm, paddingTop: '6%' },
   caption: { marginTop: space.xl, minHeight: 120, justifyContent: 'flex-start' },
   captionText: { maxWidth: 360, alignSelf: 'center' },
-  titleBlock: { gap: space.sm, alignItems: 'center', justifyContent: 'center', minHeight: 300 },
+  titleBlock: { gap: space.sm, alignItems: 'center', paddingTop: space.lg },
   ensoWrap: { position: 'absolute', top: '50%', left: '50%', marginTop: -150, marginLeft: -150 },
   bottom: { gap: space.md },
   controls: { flexDirection: 'row', gap: space.md },

@@ -57,7 +57,30 @@ const caseGuard = base
     </script>`
   : '';
 
-const head = `${caseGuard}
+// iOS home-screen apps can lay the page out a status bar shorter than the
+// screen (leaving a strip under the tab bar). When that happens, size the
+// app to the full screen. Only gaps up to 100px are corrected, so split
+// view and normal browsing are untouched.
+const fullHeight = `
+    <script>
+      (function () {
+        var standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+        if (!standalone) return;
+        function fit() {
+          var portrait = innerHeight >= innerWidth;
+          var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
+          var gap = full - innerHeight;
+          var root = document.documentElement;
+          if (gap > 0 && gap <= 100) root.style.setProperty('--app-height', full + 'px');
+          else root.style.removeProperty('--app-height');
+        }
+        fit();
+        addEventListener('resize', fit);
+        addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+      })();
+    </script>`;
+
+const head = `${caseGuard}${fullHeight}
     <link rel="manifest" href="${prefix}manifest.webmanifest" />
     <link rel="apple-touch-icon" href="${prefix}icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -69,6 +92,7 @@ const head = `${caseGuard}
       @media (prefers-color-scheme: dark) { html, body { background: #111411; } }
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
+      html, body, #root { height: var(--app-height, 100%); }
     </style>
   </head>`;
 html = html.replace('</head>', head);

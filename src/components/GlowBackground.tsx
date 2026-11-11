@@ -5,6 +5,7 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTim
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 
 import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { useSvgId } from '@/hooks/useSvgId';
 import { useTheme, type Accent } from '@/theme';
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
  */
 export function GlowBackground({ accent = 'calm', glowY = 0.1, glowX = 0.78, pulse = true, ripples = true }: Props) {
   const { c } = useTheme();
+  const sid = useSvgId();
   const { width, height } = useWindowDimensions();
   const reduceMotion = useReduceMotion();
   const breathe = useSharedValue(0.85);
@@ -50,18 +52,18 @@ export function GlowBackground({ accent = 'calm', glowY = 0.1, glowX = 0.78, pul
       <Animated.View style={[StyleSheet.absoluteFill, haloStyle]}>
         <Svg width={width} height={height}>
           <Defs>
-            <RadialGradient id="halo" cx={cx} cy={cy} r={r} gradientUnits="userSpaceOnUse">
+            <RadialGradient id={sid('halo')} cx={cx} cy={cy} r={r} gradientUnits="userSpaceOnUse">
               <Stop offset="0" stopColor={c.halo} stopOpacity={1} />
               <Stop offset="0.35" stopColor={c.halo} stopOpacity={0.45} />
               <Stop offset="1" stopColor={c.halo} stopOpacity={0} />
             </RadialGradient>
-            <RadialGradient id="tint" cx={width * (1 - glowX)} cy={height * 0.95} r={r * 0.9} gradientUnits="userSpaceOnUse">
+            <RadialGradient id={sid('tint')} cx={width * (1 - glowX)} cy={height * 0.95} r={r * 0.9} gradientUnits="userSpaceOnUse">
               <Stop offset="0" stopColor={tint} stopOpacity={1} />
               <Stop offset="1" stopColor={tint} stopOpacity={0} />
             </RadialGradient>
           </Defs>
-          <Circle cx={width * (1 - glowX)} cy={height * 0.95} r={r * 0.9} fill="url(#tint)" />
-          <Circle cx={cx} cy={cy} r={r} fill="url(#halo)" />
+          <Circle cx={width * (1 - glowX)} cy={height * 0.95} r={r * 0.9} fill={`url(#${sid('tint')})`} />
+          <Circle cx={cx} cy={cy} r={r} fill={`url(#${sid('halo')})`} />
           {ripples
             ? [0.22, 0.36, 0.52].map((k, i) => (
                 <Circle key={k} cx={cx} cy={cy} r={r * k} stroke={c.line} strokeWidth={1} fill="none" opacity={1 - i * 0.25} />

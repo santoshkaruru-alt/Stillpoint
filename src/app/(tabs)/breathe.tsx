@@ -32,7 +32,7 @@ export default function BreatheTab() {
   const { c } = useTheme();
 
   return (
-    <Screen accent="breath" glowY={0.08}>
+    <Screen accent="breath" scene="sea" sceneHeight={300}>
       <View style={styles.header}>
         <AppText variant="overline" tone="breath">
           Breathe
@@ -102,7 +102,7 @@ export default function BreatheTab() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: space.xs, paddingTop: space.lg },
+  header: { gap: space.xs, paddingTop: space.md, paddingBottom: 110 },
   sectionHeader: { paddingTop: space.sm },
   edit: { padding: space.sm },
 });

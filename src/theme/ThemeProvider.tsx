@@ -3,7 +3,7 @@ import { Platform, useColorScheme } from 'react-native';
 
 import { useSettings } from '@/store/settings';
 
-import { palettes, type Palette, type ThemeName } from './palettes';
+import { DEFAULT_THEME, palettes, type Palette, type ThemeName } from './palettes';
 
 interface ThemeValue {
   c: Palette;
@@ -11,7 +11,7 @@ interface ThemeValue {
   isDark: boolean;
 }
 
-const fallback: ThemeValue = { c: palettes.sage.dark, name: 'sage', isDark: true };
+const fallback: ThemeValue = { c: palettes[DEFAULT_THEME].dark, name: DEFAULT_THEME, isDark: true };
 const ThemeContext = createContext<ThemeValue>(fallback);
 
 /** Picks the palette from Settings (theme + light/dark/system). */
@@ -22,8 +22,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const scheme = appearance === 'system' ? (system === 'light' ? 'light' : 'dark') : appearance;
 
   const value = useMemo<ThemeValue>(() => {
-    const set = palettes[name] ?? palettes.sage;
-    return { c: set[scheme], name, isDark: scheme === 'dark' };
+    const key = name in palettes ? name : DEFAULT_THEME;
+    return { c: palettes[key][scheme], name: key, isDark: scheme === 'dark' };
   }, [name, scheme]);
 
   // Keep the browser page and status bar area in step with the theme.

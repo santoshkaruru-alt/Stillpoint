@@ -6,6 +6,7 @@ import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { MoodPicker } from '@/components/MoodPicker';
+import { themeScene } from '@/components/Scene';
 import { Screen } from '@/components/Screen';
 import { getPractice, newId, saveJournal } from '@/db';
 import { formatClock } from '@/engine/breath';
@@ -17,7 +18,7 @@ import { makeStyles, radius, space, type, useTheme } from '@/theme';
  */
 export default function Complete() {
   const styles = useStyles();
-  const { c } = useTheme();
+  const { c, name } = useTheme();
   const params = useLocalSearchParams<{ practiceId?: string; kind?: string; title?: string; moodBefore?: string }>();
   const practice = params.practiceId ? getPractice(params.practiceId) : null;
   const moodBefore = params.moodBefore ? Number(params.moodBefore) : null;
@@ -42,7 +43,7 @@ export default function Complete() {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.flex}>
-      <Screen accent={accent} edges={['top', 'bottom']}>
+      <Screen accent={accent} edges={['top', 'bottom']} scene={params.kind === 'breath' ? 'sea' : themeScene[name]} sceneHeight={240}>
         <View style={styles.header}>
           <AppText variant="overline" tone={accent}>
             {params.title ?? 'Session'}
@@ -80,7 +81,7 @@ export default function Complete() {
 const useStyles = makeStyles((c) =>
   StyleSheet.create({
   flex: { flex: 1, backgroundColor: c.bg },
-  header: { gap: space.sm, paddingTop: space.lg },
+  header: { gap: space.sm, paddingTop: 120 },
   card: { gap: space.md },
   input: {
     ...type.body,

@@ -9,7 +9,7 @@ import { playCue, preloadCues } from '@/audio/cues';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Enso } from '@/components/Enso';
-import { GlowBackground } from '@/components/GlowBackground';
+import { SceneBackdrop } from '@/components/SceneBackdrop';
 import { Icon } from '@/components/Icon';
 import { newId, savePractice } from '@/db';
 import { formatClock } from '@/engine/breath';
@@ -163,7 +163,7 @@ export default function TimerScreen() {
 
   return (
     <Pressable style={styles.root} onPress={touch} accessible={false}>
-      <GlowBackground accent="calm" glowY={0.4} glowX={0.5} pulse={!paused} ripples={false} />
+      <SceneBackdrop veil={0.38} animate={!paused} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.top}>
           <Pressable onPress={() => void finish(false)} accessibilityRole="button" accessibilityLabel="End sitting" hitSlop={12} style={styles.close}>

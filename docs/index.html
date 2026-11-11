@@ -34,6 +34,23 @@
         }
       })();
     </script>
+    <script>
+      (function () {
+        var standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+        if (!standalone) return;
+        function fit() {
+          var portrait = innerHeight >= innerWidth;
+          var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
+          var gap = full - innerHeight;
+          var root = document.documentElement;
+          if (gap > 0 && gap <= 100) root.style.setProperty('--app-height', full + 'px');
+          else root.style.removeProperty('--app-height');
+        }
+        fit();
+        addEventListener('resize', fit);
+        addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+      })();
+    </script>
     <link rel="manifest" href="/Stillpoint/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/Stillpoint/icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -45,6 +62,7 @@
       @media (prefers-color-scheme: dark) { html, body { background: #111411; } }
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
+      html, body, #root { height: var(--app-height, 100%); }
     </style>
   </head>
 
@@ -53,7 +71,7 @@
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-74f2e333345cb2330dc278834a978cc5.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-b3348f8d10bf5bf07b55dbee551b167e.js" defer></script>
+  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-d2b513b941efdb7e88f9d200197f969d.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-803cfb7cb39d4a3a7abd5d443709e35b.js" defer></script>
 
   <script>
     if ('serviceWorker' in navigator) {

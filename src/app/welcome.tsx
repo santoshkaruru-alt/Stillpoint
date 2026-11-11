@@ -4,7 +4,7 @@ import { safetyAcknowledge, safetyFooter, safetyIntro, safetyTitle } from '@cont
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { Enso } from '@/components/Enso';
+import { themeScene } from '@/components/Scene';
 import { SafetyList } from '@/components/SafetyList';
 import { Screen } from '@/components/Screen';
 import { useSettings } from '@/store/settings';
@@ -13,14 +13,12 @@ import { space, useTheme } from '@/theme';
 /** First-launch safety screen. The app stays locked until acknowledged. */
 export default function Welcome() {
   const set = useSettings((s) => s.set);
-  const { c } = useTheme();
+  const { name } = useTheme();
 
   return (
-    <Screen edges={['top', 'bottom']} accent="warm">
+    <Screen edges={['top', 'bottom']} accent="warm" scene={themeScene[name]} sceneHeight={300}>
       <View style={styles.header}>
-        <View style={styles.enso}>
-          <Enso size={120} color={c.text} opacity={0.8} />
-        </View>
+        <View style={styles.spacer} />
         <AppText variant="overline" tone="warm">
           Stillpoint
         </AppText>
@@ -48,5 +46,5 @@ export default function Welcome() {
 
 const styles = StyleSheet.create({
   header: { gap: space.sm, paddingTop: space.lg },
-  enso: { alignSelf: 'flex-start', marginLeft: -12, marginBottom: space.sm },
+  spacer: { height: 150 },
 });

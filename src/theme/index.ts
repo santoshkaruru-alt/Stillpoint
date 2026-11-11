@@ -8,7 +8,7 @@
  */
 import type { TextStyle } from 'react-native';
 
-export { palettes, themeLabels, type Palette, type Scheme, type ThemeName } from './palettes';
+export { DEFAULT_THEME, palettes, themeLabels, type Palette, type SceneColors, type Scheme, type ThemeName } from './palettes';
 export { makeStyles, ThemeProvider, useTheme } from './ThemeProvider';
 export { withAlpha } from './color';
 
