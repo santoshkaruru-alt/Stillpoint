@@ -57,13 +57,18 @@ const caseGuard = base
     </script>`
   : '';
 
-// iOS home-screen apps can draw the page from the very top of the screen
-// while reporting a viewport one status bar shorter, with the status bar
-// painted over the top as an opaque strip and a top safe area of 0.
-// When we detect that (a gap of up to 100px and no safe-area inset):
-//   - size the app to the full screen (no strip under the tab bar), and
-//   - push the content down by the gap (nothing hidden under the clock).
-// Normal browsing, split view and correctly reported insets are untouched.
+// iOS home-screen apps (especially on recent iOS versions) can draw the
+// page from the very top of the screen, under an opaque status bar, while
+// reporting a top safe area of 0 and a viewport one status bar shorter
+// than the screen. The reported size can also change after launch without
+// a resize event. So, when running from the home screen in portrait:
+//   - the app is always sized to the full screen (no strip below the tabs);
+//   - if no top safe area is reported, content starts below the status bar
+//     (the measured gap, or the usual status-bar height for the screen);
+//   - this is re-applied on launch, on return to the app, and a few times
+//     in the first seconds.
+// Browsing in Safari, landscape and correctly reported insets are untouched.
+// window.__layoutCheck holds the numbers for the Settings display check.
 const fullHeight = `
     <script>
       (function () {
@@ -78,23 +83,29 @@ const fullHeight = `
           return v;
         }
         function fit() {
-          var portrait = innerHeight >= innerWidth;
-          var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
-          var gap = full - innerHeight;
           var root = document.documentElement;
-          if (gap > 0 && gap <= 100) {
-            root.style.setProperty('--app-height', full + 'px');
-            if (envTop() < 1) root.style.setProperty('--status-gap', gap + 'px');
-            else root.style.removeProperty('--status-gap');
-          } else {
+          var portrait = screen.height >= screen.width && innerHeight >= innerWidth;
+          if (!portrait) {
             root.style.removeProperty('--app-height');
             root.style.removeProperty('--status-gap');
+            return;
           }
+          var full = Math.max(screen.height, screen.width);
+          var gap = full - innerHeight;
+          var inset = envTop();
+          var pad = 0;
+          if (inset < 1) pad = gap > 0 && gap <= 100 ? gap : full >= 812 ? 54 : 20;
+          root.style.setProperty('--app-height', full + 'px');
+          if (pad) root.style.setProperty('--status-gap', pad + 'px');
+          else root.style.removeProperty('--status-gap');
+          window.__layoutCheck = { screen: screen.width + 'x' + screen.height, view: innerWidth + 'x' + innerHeight, inset: inset, gap: gap, pad: pad, height: full };
         }
         fit();
-        addEventListener('DOMContentLoaded', fit);
-        addEventListener('resize', fit);
-        addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+        ['DOMContentLoaded', 'load', 'pageshow', 'resize', 'orientationchange'].forEach(function (e) {
+          addEventListener(e, function () { setTimeout(fit, 50); });
+        });
+        document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(fit, 50); });
+        [300, 1000, 2500].forEach(function (t) { setTimeout(fit, t); });
       })();
     </script>`;
 
@@ -111,6 +122,7 @@ const head = `${caseGuard}${fullHeight}
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
       html, body, #root { height: var(--app-height, 100%); }
+      html, body { overflow: hidden; }
       #root { box-sizing: border-box; padding-top: var(--status-gap, 0px); }
     </style>
   </head>`;

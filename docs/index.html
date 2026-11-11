@@ -47,23 +47,29 @@
           return v;
         }
         function fit() {
-          var portrait = innerHeight >= innerWidth;
-          var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
-          var gap = full - innerHeight;
           var root = document.documentElement;
-          if (gap > 0 && gap <= 100) {
-            root.style.setProperty('--app-height', full + 'px');
-            if (envTop() < 1) root.style.setProperty('--status-gap', gap + 'px');
-            else root.style.removeProperty('--status-gap');
-          } else {
+          var portrait = screen.height >= screen.width && innerHeight >= innerWidth;
+          if (!portrait) {
             root.style.removeProperty('--app-height');
             root.style.removeProperty('--status-gap');
+            return;
           }
+          var full = Math.max(screen.height, screen.width);
+          var gap = full - innerHeight;
+          var inset = envTop();
+          var pad = 0;
+          if (inset < 1) pad = gap > 0 && gap <= 100 ? gap : full >= 812 ? 54 : 20;
+          root.style.setProperty('--app-height', full + 'px');
+          if (pad) root.style.setProperty('--status-gap', pad + 'px');
+          else root.style.removeProperty('--status-gap');
+          window.__layoutCheck = { screen: screen.width + 'x' + screen.height, view: innerWidth + 'x' + innerHeight, inset: inset, gap: gap, pad: pad, height: full };
         }
         fit();
-        addEventListener('DOMContentLoaded', fit);
-        addEventListener('resize', fit);
-        addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+        ['DOMContentLoaded', 'load', 'pageshow', 'resize', 'orientationchange'].forEach(function (e) {
+          addEventListener(e, function () { setTimeout(fit, 50); });
+        });
+        document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(fit, 50); });
+        [300, 1000, 2500].forEach(function (t) { setTimeout(fit, t); });
       })();
     </script>
     <link rel="manifest" href="/Stillpoint/manifest.webmanifest" />
@@ -78,6 +84,7 @@
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
       html, body, #root { height: var(--app-height, 100%); }
+      html, body { overflow: hidden; }
       #root { box-sizing: border-box; padding-top: var(--status-gap, 0px); }
     </style>
   </head>
@@ -87,7 +94,7 @@
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-ca7ee3b395e0c2d726017305a21f23d4.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-9bc43a44a7e57b1144e6958a477f70ef.js" defer></script>
+  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-ca7ee3b395e0c2d726017305a21f23d4.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-38ca56da5f65389ab89c848365171809.js" defer></script>
 
   <script>
     if ('serviceWorker' in navigator) {

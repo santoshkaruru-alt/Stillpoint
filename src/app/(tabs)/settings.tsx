@@ -25,6 +25,22 @@ import { space, useTheme } from '@/theme';
 
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 
+/** What the phone reports about the screen (helps diagnose layout issues). */
+function displayCheck(): string {
+  if (typeof window === 'undefined') return '';
+  const w = window as Window & { __layoutCheck?: Record<string, unknown>; navigator: Navigator & { standalone?: boolean } };
+  const root = document.documentElement.style;
+  const home = !!w.navigator.standalone || window.matchMedia?.('(display-mode: standalone)').matches;
+  const fix = w.__layoutCheck;
+  return [
+    home ? 'home screen' : 'browser',
+    `screen ${screen.width}x${screen.height}`,
+    `view ${window.innerWidth}x${window.innerHeight}`,
+    fix ? `inset ${fix.inset} gap ${fix.gap} pad ${fix.pad}` : 'no fix',
+    `app ${root.getPropertyValue('--app-height') || '100%'} top ${root.getPropertyValue('--status-gap') || '0'}`,
+  ].join(' · ');
+}
+
 function sinceLabel(ts: number): string {
   const days = Math.floor((Date.now() - ts) / 86_400_000);
   if (days <= 0) return 'today';
@@ -357,6 +373,11 @@ export default function SettingsTab() {
       <AppText variant="caption" tone="faint" center>
         Becoming 1.0 · A wellbeing tool, not medical treatment.
       </AppText>
+      {isWeb ? (
+        <AppText variant="caption" tone="faint" center selectable>
+          Display check: {displayCheck()}
+        </AppText>
+      ) : null}
     </Screen>
   );
 }
