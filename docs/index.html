@@ -51,18 +51,16 @@
           var portrait = screen.height >= screen.width && innerHeight >= innerWidth;
           if (!portrait) {
             root.style.removeProperty('--app-height');
-            root.style.removeProperty('--status-gap');
+            window.__layoutCheck = undefined;
             return;
           }
           var full = Math.max(screen.height, screen.width);
           var gap = full - innerHeight;
           var inset = envTop();
-          var pad = 0;
-          if (inset < 1) pad = gap > 0 && gap <= 100 ? gap : full >= 812 ? 54 : 20;
+          // The status bar always covers the top of a home-screen app.
+          var bar = gap > 0 && gap <= 100 ? gap : full >= 812 ? 54 : 20;
           root.style.setProperty('--app-height', full + 'px');
-          if (pad) root.style.setProperty('--status-gap', pad + 'px');
-          else root.style.removeProperty('--status-gap');
-          window.__layoutCheck = { screen: screen.width + 'x' + screen.height, view: innerWidth + 'x' + innerHeight, inset: inset, gap: gap, pad: pad, height: full };
+          window.__layoutCheck = { screen: screen.width + 'x' + screen.height, view: innerWidth + 'x' + innerHeight, inset: inset, gap: gap, top: Math.max(inset, bar), height: full };
         }
         fit();
         ['DOMContentLoaded', 'load', 'pageshow', 'resize', 'orientationchange'].forEach(function (e) {
@@ -85,7 +83,6 @@
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
       html, body, #root { height: var(--app-height, 100%); }
       html, body { overflow: hidden; }
-      #root { box-sizing: border-box; padding-top: var(--status-gap, 0px); }
     </style>
   </head>
 
@@ -94,7 +91,7 @@
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-ca7ee3b395e0c2d726017305a21f23d4.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-38ca56da5f65389ab89c848365171809.js" defer></script>
+  <script src="/Stillpoint/_expo/static/js/web/__expo-metro-runtime-ed4c1cfa6193d76fc294130e42bd1916.js" defer></script><script src="/Stillpoint/_expo/static/js/web/__common-c5cbc30aa60176adb05183b88d95bfad.js" defer></script><script src="/Stillpoint/_expo/static/js/web/entry-fc0a4d40cbe4b3e0d2d43c79df15285b.js" defer></script>
 
   <script>
     if ('serviceWorker' in navigator) {

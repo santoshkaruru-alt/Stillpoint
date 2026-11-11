@@ -87,18 +87,16 @@ const fullHeight = `
           var portrait = screen.height >= screen.width && innerHeight >= innerWidth;
           if (!portrait) {
             root.style.removeProperty('--app-height');
-            root.style.removeProperty('--status-gap');
+            window.__layoutCheck = undefined;
             return;
           }
           var full = Math.max(screen.height, screen.width);
           var gap = full - innerHeight;
           var inset = envTop();
-          var pad = 0;
-          if (inset < 1) pad = gap > 0 && gap <= 100 ? gap : full >= 812 ? 54 : 20;
+          // The status bar always covers the top of a home-screen app.
+          var bar = gap > 0 && gap <= 100 ? gap : full >= 812 ? 54 : 20;
           root.style.setProperty('--app-height', full + 'px');
-          if (pad) root.style.setProperty('--status-gap', pad + 'px');
-          else root.style.removeProperty('--status-gap');
-          window.__layoutCheck = { screen: screen.width + 'x' + screen.height, view: innerWidth + 'x' + innerHeight, inset: inset, gap: gap, pad: pad, height: full };
+          window.__layoutCheck = { screen: screen.width + 'x' + screen.height, view: innerWidth + 'x' + innerHeight, inset: inset, gap: gap, top: Math.max(inset, bar), height: full };
         }
         fit();
         ['DOMContentLoaded', 'load', 'pageshow', 'resize', 'orientationchange'].forEach(function (e) {
@@ -123,7 +121,6 @@ const head = `${caseGuard}${fullHeight}
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
       html, body, #root { height: var(--app-height, 100%); }
       html, body { overflow: hidden; }
-      #root { box-sizing: border-box; padding-top: var(--status-gap, 0px); }
     </style>
   </head>`;
 html = html.replace('</head>', head);

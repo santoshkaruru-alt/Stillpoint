@@ -1,12 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AccessibilityInfo, AppState, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AmbientMixer } from '@/audio/ambient';
 import { ensureAudioSession } from '@/audio/audioSession';
 import { playCue, preloadCues } from '@/audio/cues';
 import { AppText } from '@/components/AppText';
+import { SafeAreaView } from '@/components/SafeArea';
 import { Button } from '@/components/Button';
 import { Enso } from '@/components/Enso';
 import { SceneBackdrop } from '@/components/SceneBackdrop';

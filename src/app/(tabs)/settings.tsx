@@ -36,8 +36,8 @@ function displayCheck(): string {
     home ? 'home screen' : 'browser',
     `screen ${screen.width}x${screen.height}`,
     `view ${window.innerWidth}x${window.innerHeight}`,
-    fix ? `inset ${fix.inset} gap ${fix.gap} pad ${fix.pad}` : 'no fix',
-    `app ${root.getPropertyValue('--app-height') || '100%'} top ${root.getPropertyValue('--status-gap') || '0'}`,
+    fix ? `inset ${fix.inset} gap ${fix.gap} top ${fix.top}` : 'no fix',
+    `app ${root.getPropertyValue('--app-height') || '100%'}`,
   ].join(' · ');
 }
 

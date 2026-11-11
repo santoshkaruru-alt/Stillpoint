@@ -1,10 +1,10 @@
 import { Tabs } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { SFSymbol } from 'expo-symbols';
 
 import { fonts, useTheme } from '@/theme';
 
 import { Icon } from './Icon';
+import { useAppInsets } from './SafeArea';
 
 const tabs: { name: string; title: string; icon: SFSymbol }[] = [
   { name: 'index', title: 'Home', icon: 'house' },
@@ -16,7 +16,7 @@ const tabs: { name: string; title: string; icon: SFSymbol }[] = [
 
 /** Bottom tab bar for the web app (the native app uses system tabs). */
 export function AppTabs() {
-  const insets = useSafeAreaInsets();
+  const insets = useAppInsets();
   const { c } = useTheme();
   return (
     <Tabs

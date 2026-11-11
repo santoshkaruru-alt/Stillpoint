@@ -2,7 +2,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AccessibilityInfo, AppState, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { segments as library } from '@content/segments';
 import { planFor } from '@content/sessionPlans';
@@ -12,6 +11,7 @@ import { playCue } from '@/audio/cues';
 import { DeviceTTSProvider } from '@/audio/voice/DeviceTTSProvider';
 import type { VoiceProvider } from '@/audio/voice/VoiceProvider';
 import { AppText } from '@/components/AppText';
+import { SafeAreaView } from '@/components/SafeArea';
 import { Button } from '@/components/Button';
 import { SceneBackdrop } from '@/components/SceneBackdrop';
 import { Icon } from '@/components/Icon';

@@ -2,12 +2,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Children, type ReactNode } from 'react';
 import { StyleSheet, useWindowDimensions, View, type ViewStyle } from 'react-native';
 import Animated, { FadeInDown, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { SafeAreaView, useSafeAreaInsets, type Edge } from 'react-native-safe-area-context';
+import type { Edge } from 'react-native-safe-area-context';
 
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { makeStyles, space, useTheme, withAlpha, type Accent } from '@/theme';
 
 import { GlowBackground } from './GlowBackground';
+import { SafeAreaView, useAppInsets } from './SafeArea';
 import { Scene, type SceneKind } from './Scene';
 
 interface Props {
@@ -40,7 +41,7 @@ const useStyles = makeStyles((c) =>
 export function Screen({ children, accent = 'calm', scroll = true, edges = ['top'], contentStyle, glowY, scene, sceneHeight = 340 }: Props) {
   const styles = useStyles();
   const { c } = useTheme();
-  const insets = useSafeAreaInsets();
+  const insets = useAppInsets();
   const { width } = useWindowDimensions();
   const reduceMotion = useReduceMotion();
   const scrollY = useSharedValue(0);
