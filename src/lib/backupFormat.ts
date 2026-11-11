@@ -7,6 +7,7 @@
  */
 import type { BreathHold, JournalEntry, PacedPattern, PracticeLog } from '@/models/types';
 
+// The file format keeps its original id so older backups still restore.
 export const BACKUP_APP = 'stillpoint';
 export const BACKUP_VERSION = 1;
 
@@ -45,7 +46,7 @@ export function buildBackup(parts: {
 
 export function backupFileName(now = new Date()): string {
   const d = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  return `stillpoint-backup-${d}.json`;
+  return `becoming-backup-${d}.json`;
 }
 
 export class BackupError extends Error {}
@@ -66,11 +67,11 @@ export function parseBackup(text: string): Backup {
   try {
     data = JSON.parse(text);
   } catch {
-    throw new BackupError('That file is not a Stillpoint backup.');
+    throw new BackupError('That file is not a Becoming backup.');
   }
-  if (!isObj(data) || data.app !== BACKUP_APP) throw new BackupError('That file is not a Stillpoint backup.');
+  if (!isObj(data) || data.app !== BACKUP_APP) throw new BackupError('That file is not a Becoming backup.');
   if (!isNum(data.version) || (data.version as number) > BACKUP_VERSION) {
-    throw new BackupError('This backup was made by a newer version of Stillpoint. Update the app, then try again.');
+    throw new BackupError('This backup was made by a newer version of Becoming. Update the app, then try again.');
   }
   return {
     app: BACKUP_APP,

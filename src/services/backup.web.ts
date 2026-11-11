@@ -15,7 +15,7 @@ export async function saveBackup(): Promise<'saved' | 'cancelled'> {
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.canShare?.({ files: [file] }) && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
     try {
-      await navigator.share({ files: [file], title: 'Stillpoint backup' });
+      await navigator.share({ files: [file], title: 'Becoming backup' });
       markBackedUp();
       return 'saved';
     } catch (e) {

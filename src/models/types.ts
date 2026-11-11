@@ -1,5 +1,6 @@
 /**
- * Core data models for Stillpoint.
+ * Core data models for Becoming (originally named Stillpoint; internal
+ * ids and storage keys keep that name so existing data carries over).
  *
  * Content (scripts, presets) lives in /content and is typed by the
  * "content" types below. Runtime objects (an assembled Session, a logged

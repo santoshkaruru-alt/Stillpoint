@@ -20,7 +20,7 @@ export default function Welcome() {
       <View style={styles.header}>
         <View style={styles.spacer} />
         <AppText variant="overline" tone="warm">
-          Stillpoint
+          Becoming
         </AppText>
         <AppText variant="display" accessibilityRole="header">
           {safetyTitle}

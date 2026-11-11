@@ -15,7 +15,7 @@ export async function saveBackup(): Promise<'saved' | 'cancelled'> {
   if (file.exists) file.delete();
   file.create();
   await file.write(json);
-  await Sharing.shareAsync(file.uri, { mimeType: 'application/json', UTI: 'public.json', dialogTitle: 'Save your Stillpoint backup' });
+  await Sharing.shareAsync(file.uri, { mimeType: 'application/json', UTI: 'public.json', dialogTitle: 'Save your Becoming backup' });
   markBackedUp();
   return 'saved';
 }

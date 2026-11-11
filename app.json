@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Stillpoint",
+    "name": "Becoming",
     "slug": "stillpoint",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -53,8 +53,8 @@
     "web": {
       "output": "single",
       "favicon": "./assets/images/favicon.png",
-      "name": "Stillpoint",
-      "shortName": "Stillpoint",
+      "name": "Becoming",
+      "shortName": "Becoming",
       "description": "Guided meditation and breathwork",
       "themeColor": "#EDF3F6",
       "backgroundColor": "#EDF3F6"

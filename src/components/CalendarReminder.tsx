@@ -34,13 +34,13 @@ export function CalendarReminder() {
     if (!url) return;
     const win = window.open(url, '_blank');
     if (!win) window.location.href = url;
-    setTimeout(() => notify('Check your calendar', `If asked, tap Add. Stillpoint will remind you every day at ${formatTime(mins)}. Change or delete it any time in the Calendar app.`), 400);
+    setTimeout(() => notify('Check your calendar', `If asked, tap Add. Becoming will remind you every day at ${formatTime(mins)}. Change or delete it any time in the Calendar app.`), 400);
   };
 
   return (
     <View style={styles.wrap}>
       <AppText variant="caption" tone="faint">
-        Your phone's Calendar can remind you every day, even when Stillpoint is closed. Do this twice for a morning and an evening reminder.
+        Your phone's Calendar can remind you every day, even when Becoming is closed. Do this twice for a morning and an evening reminder.
       </AppText>
       <Stepper
         label="Time"

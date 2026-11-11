@@ -31,9 +31,9 @@ describe('backup format', () => {
     expect(sample().settings).not.toHaveProperty('set');
   });
 
-  it('rejects files that are not Stillpoint backups', () => {
+  it('rejects files that are not Becoming backups', () => {
     expect(() => parseBackup('not json')).toThrow(BackupError);
-    expect(() => parseBackup(JSON.stringify({ app: 'penny', transactions: [] }))).toThrow('not a Stillpoint backup');
+    expect(() => parseBackup(JSON.stringify({ app: 'penny', transactions: [] }))).toThrow('not a Becoming backup');
     expect(() => parseBackup('[]')).toThrow(BackupError);
   });
 
@@ -69,7 +69,7 @@ describe('backup format', () => {
   });
 
   it('names files by date and summarises contents', () => {
-    expect(backupFileName(new Date(2026, 0, 5))).toBe('stillpoint-backup-2026-01-05.json');
+    expect(backupFileName(new Date(2026, 0, 5))).toBe('becoming-backup-2026-01-05.json');
     expect(summarize(sample())).toBe('1 session, 1 journal entry, 1 breath hold');
   });
 });

@@ -355,7 +355,7 @@ export default function SettingsTab() {
       </Section>
 
       <AppText variant="caption" tone="faint" center>
-        Stillpoint 1.0 · A wellbeing tool, not medical treatment.
+        Becoming 1.0 · A wellbeing tool, not medical treatment.
       </AppText>
     </Screen>
   );

@@ -6,7 +6,7 @@
 export const safetyTitle = 'Before you begin';
 
 export const safetyIntro =
-  'Stillpoint guides deep relaxation and breathing techniques that can change how your body feels. Please read this once.';
+  'Becoming guides deep relaxation and breathing techniques that can change how your body feels. Please read this once.';
 
 export const safetyPoints: { icon: string; text: string }[] = [
   { icon: 'car', text: 'Never practise while driving or operating anything that needs your attention.' },
@@ -20,7 +20,7 @@ export const safetyPoints: { icon: string; text: string }[] = [
 ];
 
 export const safetyFooter =
-  'Stillpoint is a wellbeing tool, not medical treatment. If something does not feel right, stop.';
+  'Becoming is a wellbeing tool, not medical treatment. If something does not feel right, stop.';
 
 export const safetyAcknowledge = 'I understand';
 

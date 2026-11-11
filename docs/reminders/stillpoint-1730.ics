@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Stillpoint//Daily reminder//EN
+PRODID:-//Becoming//Daily reminder//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
@@ -9,9 +9,9 @@ DTSTAMP:20260101T000000Z
 DTSTART:20260101T173000
 DURATION:PT10M
 RRULE:FREQ=DAILY
-SUMMARY:Stillpoint · a few quiet minutes
-DESCRIPTION:Time to breathe. Open Stillpoint: https://santoshkaruru-alt.git
- hub.io/Stillpoint/
+SUMMARY:Becoming · a few quiet minutes
+DESCRIPTION:Time to breathe. Open Becoming: https://santoshkaruru-alt.githu
+ b.io/Stillpoint/
 URL:https://santoshkaruru-alt.github.io/Stillpoint/
 BEGIN:VALARM
 ACTION:DISPLAY

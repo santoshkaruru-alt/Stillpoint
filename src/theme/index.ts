@@ -1,5 +1,5 @@
 /**
- * Stillpoint design system: calm, natural palettes in light and dark,
+ * Becoming design system: calm, natural palettes in light and dark,
  * a refined serif for headings (Cormorant Garamond) and a soft sans for
  * everything else (Manrope), generous space and quiet hairlines.
  *

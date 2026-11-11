@@ -46,4 +46,4 @@ createServer((req, res) => {
   if (!existsSync(file) || statSync(file).isDirectory()) file = join(root, 'index.html'); // SPA routes
   res.writeHead(200, { 'Content-Type': types[extname(file)] ?? 'application/octet-stream' });
   res.end(readFileSync(file));
-}).listen(port, () => console.log(`Stillpoint web: http://localhost:${port}${base}/`));
+}).listen(port, () => console.log(`Becoming web: http://localhost:${port}${base}/`));

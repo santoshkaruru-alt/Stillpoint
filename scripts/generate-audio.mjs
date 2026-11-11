@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generates every sound Stillpoint uses, from scratch, so there are no
+ * Generates every sound Becoming uses, from scratch, so there are no
  * licensing questions: breath cue tones, a closing bell, four seamless
  * ambient beds and three binaural tone loops.
  *

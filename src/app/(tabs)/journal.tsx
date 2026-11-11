@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import { useMemo } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
@@ -15,28 +14,36 @@ import { averageMoodLift, currentStreak, holdTrend, longestStreak, minutesByDay,
 import type { JournalEntry, PracticeLog } from '@/models/types';
 import { makeStyles, space } from '@/theme';
 
+/**
+ * Everything the Journal shows. `version` changes whenever history is
+ * saved or deleted; it is passed in (rather than only listed as a
+ * dependency) so React Compiler sees the data depends on it. With an
+ * unused dependency the compiler kept showing stale entries until reload.
+ */
+function loadJournalData(version: number) {
+  const practices = listPractices();
+  const journal = listJournal();
+  const days = practiceDays(practices);
+  return {
+    version,
+    practices,
+    journal,
+    streak: currentStreak(days),
+    longest: longestStreak(days),
+    minutes: totalMinutes(practices),
+    byDay: minutesByDay(practices),
+    trend: holdTrend(listHolds()),
+    lift: averageMoodLift(journal),
+    byId: new Map(practices.map((p) => [p.id, p])),
+  };
+}
+
 export default function JournalTab() {
   const styles = useStyles();
   const version = useDataVersion((s) => s.v);
   const { width } = useWindowDimensions();
 
-  const data = useMemo(() => {
-    void version;
-    const practices = listPractices();
-    const journal = listJournal();
-    const days = practiceDays(practices);
-    return {
-      practices,
-      journal,
-      streak: currentStreak(days),
-      longest: longestStreak(days),
-      minutes: totalMinutes(practices),
-      byDay: minutesByDay(practices),
-      trend: holdTrend(listHolds()),
-      lift: averageMoodLift(journal),
-      byId: new Map(practices.map((p) => [p.id, p])),
-    };
-  }, [version]);
+  const data = loadJournalData(version);
 
   const chartWidth = width - space.lg * 2 - space.lg * 2;
 
