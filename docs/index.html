@@ -23,7 +23,7 @@
         flex: 1;
       }
     </style>
-  <meta name="theme-color" content="#F2F0E9">
+  <meta name="theme-color" content="#EDF3F6">
 <meta name="description" content="Guided meditation and breathwork">
 <link rel="icon" href="/Stillpoint/favicon.ico"/>
     <script>
@@ -38,15 +38,30 @@
       (function () {
         var standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
         if (!standalone) return;
+        function envTop() {
+          var d = document.createElement('div');
+          d.style.cssText = 'position:fixed;top:0;left:0;width:0;padding-top:env(safe-area-inset-top);visibility:hidden';
+          (document.body || document.documentElement).appendChild(d);
+          var v = parseFloat(getComputedStyle(d).paddingTop) || 0;
+          d.remove();
+          return v;
+        }
         function fit() {
           var portrait = innerHeight >= innerWidth;
           var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
           var gap = full - innerHeight;
           var root = document.documentElement;
-          if (gap > 0 && gap <= 100) root.style.setProperty('--app-height', full + 'px');
-          else root.style.removeProperty('--app-height');
+          if (gap > 0 && gap <= 100) {
+            root.style.setProperty('--app-height', full + 'px');
+            if (envTop() < 1) root.style.setProperty('--status-gap', gap + 'px');
+            else root.style.removeProperty('--status-gap');
+          } else {
+            root.style.removeProperty('--app-height');
+            root.style.removeProperty('--status-gap');
+          }
         }
         fit();
+        addEventListener('DOMContentLoaded', fit);
         addEventListener('resize', fit);
         addEventListener('orientationchange', function () { setTimeout(fit, 300); });
       })();
@@ -58,11 +73,12 @@
     <meta name="apple-mobile-web-app-title" content="Stillpoint" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <style>
-      html, body { background: #F2F0E9; color-scheme: light dark; }
-      @media (prefers-color-scheme: dark) { html, body { background: #111411; } }
+      html, body { background: #EDF3F6; color-scheme: light dark; }
+      @media (prefers-color-scheme: dark) { html, body { background: #091925; } }
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
       html, body, #root { height: var(--app-height, 100%); }
+      #root { box-sizing: border-box; padding-top: var(--status-gap, 0px); }
     </style>
   </head>
 

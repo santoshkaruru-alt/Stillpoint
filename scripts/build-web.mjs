@@ -57,24 +57,42 @@ const caseGuard = base
     </script>`
   : '';
 
-// iOS home-screen apps can lay the page out a status bar shorter than the
-// screen (leaving a strip under the tab bar). When that happens, size the
-// app to the full screen. Only gaps up to 100px are corrected, so split
-// view and normal browsing are untouched.
+// iOS home-screen apps can draw the page from the very top of the screen
+// while reporting a viewport one status bar shorter, with the status bar
+// painted over the top as an opaque strip and a top safe area of 0.
+// When we detect that (a gap of up to 100px and no safe-area inset):
+//   - size the app to the full screen (no strip under the tab bar), and
+//   - push the content down by the gap (nothing hidden under the clock).
+// Normal browsing, split view and correctly reported insets are untouched.
 const fullHeight = `
     <script>
       (function () {
         var standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
         if (!standalone) return;
+        function envTop() {
+          var d = document.createElement('div');
+          d.style.cssText = 'position:fixed;top:0;left:0;width:0;padding-top:env(safe-area-inset-top);visibility:hidden';
+          (document.body || document.documentElement).appendChild(d);
+          var v = parseFloat(getComputedStyle(d).paddingTop) || 0;
+          d.remove();
+          return v;
+        }
         function fit() {
           var portrait = innerHeight >= innerWidth;
           var full = portrait ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
           var gap = full - innerHeight;
           var root = document.documentElement;
-          if (gap > 0 && gap <= 100) root.style.setProperty('--app-height', full + 'px');
-          else root.style.removeProperty('--app-height');
+          if (gap > 0 && gap <= 100) {
+            root.style.setProperty('--app-height', full + 'px');
+            if (envTop() < 1) root.style.setProperty('--status-gap', gap + 'px');
+            else root.style.removeProperty('--status-gap');
+          } else {
+            root.style.removeProperty('--app-height');
+            root.style.removeProperty('--status-gap');
+          }
         }
         fit();
+        addEventListener('DOMContentLoaded', fit);
         addEventListener('resize', fit);
         addEventListener('orientationchange', function () { setTimeout(fit, 300); });
       })();
@@ -88,11 +106,12 @@ const head = `${caseGuard}${fullHeight}
     <meta name="apple-mobile-web-app-title" content="Stillpoint" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <style>
-      html, body { background: #F2F0E9; color-scheme: light dark; }
-      @media (prefers-color-scheme: dark) { html, body { background: #111411; } }
+      html, body { background: #EDF3F6; color-scheme: light dark; }
+      @media (prefers-color-scheme: dark) { html, body { background: #091925; } }
       body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
       input, textarea { font-size: 16px; } /* stops iOS zooming into fields */
       html, body, #root { height: var(--app-height, 100%); }
+      #root { box-sizing: border-box; padding-top: var(--status-gap, 0px); }
     </style>
   </head>`;
 html = html.replace('</head>', head);
