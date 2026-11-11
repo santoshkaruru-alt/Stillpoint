@@ -22,7 +22,7 @@ import { MeditationRunner, type RunnerEvent } from '@/engine/meditation';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { useScreenAwake } from '@/hooks/useScreenAwake';
 import { isWeb } from '@/lib/platformSetup';
-import type { Session, SessionLength } from '@/models/types';
+import type { Session } from '@/models/types';
 import { useSettings } from '@/store/settings';
 import { makeStyles, radius, space, useTheme, withAlpha } from '@/theme';
 
@@ -33,9 +33,8 @@ const MIN_LOG_SEC = 60;
 
 export default function MeditationPlayer() {
   const styles = useStyles();
-  const params = useLocalSearchParams<{ length: string; from?: string; mood?: string }>();
-  const lengthMin = Number(params.length) as SessionLength;
-  const plan = planFor(lengthMin);
+  const params = useLocalSearchParams<{ plan: string; from?: string; mood?: string }>();
+  const plan = planFor(params.plan);
 
   // Settings are read once at start; changes apply to the next session.
   const [session] = useState<Session | null>(() => {
@@ -100,7 +99,7 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
       savePractice({
         id: practiceId,
         kind: 'meditation',
-        refId: String(session.lengthMin),
+        refId: session.planId,
         title: `${session.name} · ${session.lengthMin} min`,
         startedAt,
         durationSec: active,
@@ -136,7 +135,7 @@ function Player({ session, fromSegment, moodBefore }: { session: Session; fromSe
         useSettings.getState().set({
           lastSession: {
             kind: 'meditation',
-            lengthMin: session.lengthMin,
+            planId: session.planId,
             segmentIndex: e.segmentIndex,
             title: `${session.name} · ${session.lengthMin} min, ${seg.title}`,
             at: Date.now(),

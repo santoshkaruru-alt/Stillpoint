@@ -128,7 +128,8 @@ export function assembleSession(
   });
   const now = opts.now ?? Date.now();
   return {
-    id: `med-${plan.lengthMin}-${now.toString(36)}`,
+    id: `med-${plan.id}-${now.toString(36)}`,
+    planId: plan.id,
     lengthMin: plan.lengthMin,
     name: plan.name,
     segments,

@@ -5,9 +5,11 @@ import type { Intention } from '../src/models/types';
  *   "You are becoming {{identity}}."
  *   "You feel {{emotion}}."
  *   "{{scene}}"
+ * and the Release part: "Bring to mind something you are ready to leave
+ * behind. {{letGo}}."
  */
 
-export const intentionPrompts: Record<keyof Intention, { label: string; lead: string; placeholder: string; examples: string[] }> = {
+export const intentionPrompts: Record<Exclude<keyof Intention, never>, { label: string; lead: string; placeholder: string; examples: string[] }> = {
   identity: {
     label: 'Who are you becoming?',
     lead: 'You are becoming…',
@@ -25,6 +27,12 @@ export const intentionPrompts: Record<keyof Intention, { label: string; lead: st
     placeholder: 'grateful, free and full of energy',
     examples: ['deeply grateful', 'calm and safe', 'joyful and light', 'confident and free', 'loved and whole'],
   },
+  letGo: {
+    label: 'What are you ready to let go of?',
+    lead: 'An old feeling or habit…',
+    placeholder: 'worrying about what others think',
+    examples: ['worry about the future', 'impatience', 'feeling not good enough', 'an old resentment', 'rushing through every day'],
+  },
   scene: {
     label: 'One moment from your future',
     lead: 'Picture it happening now…',
@@ -39,7 +47,8 @@ export const intentionPrompts: Record<keyof Intention, { label: string; lead: st
 };
 
 /** Used when a field is left empty, so the script always reads naturally. */
-export const intentionDefaults: Intention = {
+export const intentionDefaults: Required<Intention> = {
+  letGo: 'An old feeling that no longer serves you',
   identity: 'the calmest, kindest and most capable version of yourself',
   emotion: 'a quiet, steady joy',
   scene:

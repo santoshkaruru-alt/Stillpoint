@@ -28,7 +28,7 @@ function tinySession(): Session {
     { kind: 'speech', id: 'b0', text: 'three', estSec: 5 },
     { kind: 'pause', id: 'b1', sec: 5, elastic: false },
   ]);
-  return { id: 's', lengthMin: 10, name: 'tiny', segments: [a, b], totalSec: 50, createdAt: 0 };
+  return { id: 's', planId: 'test', lengthMin: 10, name: 'tiny', segments: [a, b], totalSec: 50, createdAt: 0 };
 }
 
 const types = (events: RunnerEvent[]) => events.map((e) => (e.type === 'speak' ? `speak:${e.step.text}` : e.type === 'segment' ? `segment:${e.segmentIndex}` : e.type));

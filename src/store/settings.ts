@@ -2,14 +2,14 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { kvStorage } from './kv';
-import type { AmbientBedId, Intention, SessionLength } from '@/models/types';
+import type { AmbientBedId, Intention } from '@/models/types';
 import type { ThemeName } from '@/theme/palettes';
 
 export type ReduceMotionPref = 'system' | 'on' | 'off';
 export type AppearancePref = 'system' | 'light' | 'dark';
 
 export type LastSession =
-  | { kind: 'meditation'; lengthMin: SessionLength; segmentIndex: number; title: string; at: number }
+  | { kind: 'meditation'; planId?: string; lengthMin?: number; segmentIndex: number; title: string; at: number }
   | { kind: 'breath'; patternId: string; intense: boolean; title: string; at: number };
 
 export interface ReminderSettings {
@@ -67,7 +67,7 @@ export interface SettingsState {
   set: (patch: Partial<Omit<SettingsState, 'set'>>) => void;
 }
 
-export const defaultIntention: Intention = { identity: '', emotion: '', scene: '' };
+export const defaultIntention: Intention = { identity: '', emotion: '', scene: '', letGo: '' };
 
 export const useSettings = create<SettingsState>()(
   persist(

@@ -14,7 +14,7 @@ import type { Intention } from '@/models/types';
 import { defaultIntention, useSettings } from '@/store/settings';
 import { makeStyles, radius, space, type, useTheme } from '@/theme';
 
-const FIELDS: (keyof Intention)[] = ['identity', 'emotion', 'scene'];
+const FIELDS: (keyof Intention)[] = ['letGo', 'identity', 'emotion', 'scene'];
 
 /**
  * Intention builder: who you are becoming, the feeling, one future scene.
@@ -31,7 +31,7 @@ export default function IntentionBuilder() {
 
   const update = (key: keyof Intention, value: string) => setDraft((d) => ({ ...d, [key]: value }));
   const resolved = resolveIntention(draft);
-  const preview = `You are becoming ${resolved.identity}. You feel ${resolved.emotion}. ${resolved.scene}`;
+  const preview = `${resolved.letGo}. You are becoming ${resolved.identity}. You feel ${resolved.emotion}. ${resolved.scene}`;
 
   const hear = () => {
     const voice = useSettings.getState();
@@ -47,7 +47,7 @@ export default function IntentionBuilder() {
   const saveAndBegin = () => {
     set({ intention: draft });
     router.back();
-    setTimeout(() => startMeditation(20), 250);
+    setTimeout(() => startMeditation('return'), 250);
   };
 
   return (
@@ -61,7 +61,7 @@ export default function IntentionBuilder() {
             Who are you becoming?
           </AppText>
           <AppText tone="muted">
-            Write it as if it is already true. Your words are spoken back to you in the Future Self part of each session.
+            First name what you are ready to leave behind. Then describe who you are becoming, as if it is already true. Your words are spoken back to you during each session.
           </AppText>
         </View>
 
@@ -75,7 +75,7 @@ export default function IntentionBuilder() {
                 {p.lead}
               </AppText>
               <TextInput
-                value={draft[key]}
+                value={draft[key] ?? ''}
                 onChangeText={(v) => update(key, v)}
                 placeholder={p.placeholder}
                 placeholderTextColor={c.textFaint}

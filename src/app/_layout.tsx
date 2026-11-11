@@ -1,10 +1,9 @@
-import { CormorantGaramond_300Light } from '@expo-google-fonts/cormorant-garamond/300Light';
-import { CormorantGaramond_400Regular } from '@expo-google-fonts/cormorant-garamond/400Regular';
-import { CormorantGaramond_400Regular_Italic } from '@expo-google-fonts/cormorant-garamond/400Regular_Italic';
 import { CormorantGaramond_500Medium } from '@expo-google-fonts/cormorant-garamond/500Medium';
-import { Manrope_400Regular } from '@expo-google-fonts/manrope/400Regular';
+import { CormorantGaramond_500Medium_Italic } from '@expo-google-fonts/cormorant-garamond/500Medium_Italic';
+import { CormorantGaramond_600SemiBold } from '@expo-google-fonts/cormorant-garamond/600SemiBold';
 import { Manrope_500Medium } from '@expo-google-fonts/manrope/500Medium';
 import { Manrope_600SemiBold } from '@expo-google-fonts/manrope/600SemiBold';
+import { Manrope_700Bold } from '@expo-google-fonts/manrope/700Bold';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -23,13 +22,12 @@ setupPlatform();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    CormorantGaramond_300Light,
-    CormorantGaramond_400Regular,
-    CormorantGaramond_400Regular_Italic,
     CormorantGaramond_500Medium,
-    Manrope_400Regular,
+    CormorantGaramond_500Medium_Italic,
+    CormorantGaramond_600SemiBold,
     Manrope_500Medium,
     Manrope_600SemiBold,
+    Manrope_700Bold,
   });
   const ready = fontsLoaded || !!fontError;
 
@@ -66,7 +64,7 @@ function AppStack({ ready }: { ready: boolean }) {
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }}>
         <Stack.Protected guard={acknowledged}>
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="session/[length]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
+          <Stack.Screen name="session/[plan]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           <Stack.Screen name="session/complete" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           <Stack.Screen name="breath/[pattern]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           <Stack.Screen name="timer/[minutes]" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />

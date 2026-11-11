@@ -31,7 +31,7 @@ export default function Home() {
   const sceneHeight = Math.round(Math.min(560, Math.max(380, height * 0.6)));
 
   // Mornings suggest the short session; later, the 20 minute one.
-  const suggested = planFor(new Date().getHours() < 12 ? 10 : 20)!;
+  const suggested = planFor(new Date().getHours() < 12 ? 'reset' : 'return')!;
 
   return (
     <Screen scene={themeScene[name]} sceneHeight={sceneHeight}>
@@ -55,7 +55,7 @@ export default function Home() {
         <Button
           label={`Begin · ${suggested.name}, ${suggested.lengthMin} min`}
           size="xl"
-          onPress={() => startMeditation(suggested.lengthMin)}
+          onPress={() => startMeditation(suggested.id)}
           accessibilityHint="Starts today's suggested meditation"
         />
         {last ? (

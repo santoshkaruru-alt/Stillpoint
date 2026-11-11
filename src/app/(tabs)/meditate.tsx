@@ -33,7 +33,7 @@ export default function MeditateTab() {
   const { c, name } = useTheme();
   const intention = useSettings((s) => s.intention);
   const [mood, setMood] = useState<number | null>(null);
-  const hasIntention = !!(intention.identity || intention.emotion || intention.scene);
+  const hasIntention = !!(intention.identity || intention.emotion || intention.scene || intention.letGo);
 
   return (
     <Screen accent="calm" scene={themeScene[name]} sceneHeight={300}>
@@ -57,7 +57,7 @@ export default function MeditateTab() {
             </View>
             <AppText variant="quote" tone={hasIntention ? 'default' : 'muted'}>
               {hasIntention
-                ? [intention.identity && `Becoming ${intention.identity}.`, intention.emotion && `Feeling ${intention.emotion}.`].filter(Boolean).join(' ') ||
+                ? [intention.letGo && `Letting go of ${intention.letGo.replace(/[.!]+$/, '')}.`, intention.identity && `Becoming ${intention.identity}.`, intention.emotion && `Feeling ${intention.emotion}.`].filter(Boolean).join(' ') ||
                   'Your future scene is ready.'
                 : 'Who you are becoming, how it feels, and one moment from your future.'}
             </AppText>
@@ -68,8 +68,8 @@ export default function MeditateTab() {
       <CardGroup>
         {sessionPlans.map((p) => (
           <Pressable
-            key={p.lengthMin}
-            onPress={() => startMeditation(p.lengthMin, 0, mood)}
+            key={p.id}
+            onPress={() => startMeditation(p.id, 0, mood)}
             accessibilityRole="button"
             accessibilityLabel={`${p.name}, ${p.lengthMin} minutes. ${p.description}`}
             accessibilityHint="Starts this session"

@@ -74,18 +74,26 @@ describe('templates', () => {
     expect(r.scene).toBe('You wake up rested.');
   });
 
-  it('only the future segment uses placeholders, and it uses all three in every variant', () => {
+  it('future uses identity, emotion and scene; release uses letGo; nothing else is personal', () => {
     for (const seg of Object.values(segments)) {
       for (const script of Object.values(seg.scripts)) {
         if (seg.id === 'future') {
           expect(script).toContain('{{identity}}');
           expect(script).toContain('{{emotion}}');
           expect(script).toContain('{{scene}}');
+        } else if (seg.id === 'release') {
+          expect(script).toContain('{{letGo}}');
         } else {
           expect(hasPlaceholders(script)).toBe(false);
         }
       }
     }
+  });
+
+  it('fills the let-go placeholder, with a gentle default', () => {
+    expect(fillTemplate('Leave behind. {{letGo}}.', { letGo: 'impatience.' })).toBe('Leave behind. Impatience.');
+    expect(fillTemplate('{{letGo}}.', {})).toBe(`${intentionDefaults.letGo}.`);
+    expect(intentionDefaults.letGo[0]).toBe(intentionDefaults.letGo[0].toUpperCase());
   });
 });
 
@@ -97,6 +105,7 @@ describe('allocateDurations', () => {
       expect(d).toHaveLength(plan.segments.length);
     }
     const plan: SessionPlan = {
+      id: 'test',
       lengthMin: 10,
       name: 't',
       description: '',
@@ -165,20 +174,48 @@ describe('assembleSession (real content)', () => {
     scene: 'I walk along the beach at sunrise and I feel completely alive.',
   };
 
-  it.each([10, 20, 45, 60])('a %i minute session lands within 2%% of its length at default settings', (len) => {
-    const s = assembleSession(planFor(len)!, segments, { voiceRate: 0.82, pauseScale: 1, intention, now: 1 });
-    expect(s.segments.map((x) => x.id)).toEqual(['settle', 'breath', 'body', 'present', 'heart', 'future', 'closing']);
-    expect(Math.abs(s.totalSec - len * 60)).toBeLessThanOrEqual(len * 60 * 0.02);
+  const ids = sessionPlans.map((p) => p.id);
+
+  it.each(ids)('"%s" lands within 2%% of its length at default settings', (id) => {
+    const plan = planFor(id)!;
+    const s = assembleSession(plan, segments, { voiceRate: 0.82, pauseScale: 1, intention, now: 1 });
+    expect(s.planId).toBe(id);
+    expect(Math.abs(s.totalSec - plan.lengthMin * 60)).toBeLessThanOrEqual(plan.lengthMin * 60 * 0.02);
   });
 
-  it.each([10, 20, 45, 60])('a %i minute session still fits with a slow voice and long pauses', (len) => {
-    const s = assembleSession(planFor(len)!, segments, { voiceRate: 0.6, pauseScale: 1.5, intention });
-    expect(Math.abs(s.totalSec - len * 60)).toBeLessThanOrEqual(len * 60 * 0.03);
+  it.each(ids)('"%s" still fits with a slow voice and long pauses', (id) => {
+    const plan = planFor(id)!;
+    const s = assembleSession(plan, segments, { voiceRate: 0.6, pauseScale: 1.5, intention });
+    expect(Math.abs(s.totalSec - plan.lengthMin * 60)).toBeLessThanOrEqual(plan.lengthMin * 60 * 0.03);
+  });
+
+  it('guided sessions release the old self before rehearsing the new one', () => {
+    for (const id of ['reset', 'return', 'deep', 'journey']) {
+      const order = planFor(id)!.segments.map((x) => x.id);
+      // Now, then release the old, then open the heart, then rehearse the new.
+      const at = (x: (typeof order)[number]) => order.indexOf(x);
+      expect(at('present')).toBeGreaterThan(-1);
+      expect(at('release')).toBe(at('present') + 1);
+      expect(at('heart')).toBe(at('release') + 1);
+      expect(at('future')).toBe(at('heart') + 1);
+      expect(order[0]).toBe('settle');
+      expect(order[order.length - 1]).toBe('closing');
+    }
+    // The longer sessions keep the body and space practice.
+    for (const id of ['return', 'deep', 'journey']) expect(planFor(id)!.segments.map((x) => x.id)).toContain('body');
+    expect(planFor('centres')!.segments.map((x) => x.id)).toContain('centres');
+  });
+
+  it('finds plans by id or, for older links, by length', () => {
+    expect(planFor('return')?.lengthMin).toBe(20);
+    expect(planFor('20')?.id).toBe('return');
+    expect(planFor(45)?.id).toBe('deep');
+    expect(planFor('nope')).toBeUndefined();
   });
 
   it('every segment keeps some open silence at default settings', () => {
-    for (const len of [10, 20, 45, 60]) {
-      const s = assembleSession(planFor(len)!, segments, { voiceRate: 0.82 });
+    for (const plan of sessionPlans) {
+      const s = assembleSession(plan, segments, { voiceRate: 0.82 });
       for (const seg of s.segments) {
         const elastic = seg.steps.filter((x) => x.kind === 'pause' && x.elastic);
         expect(elastic.length).toBeGreaterThan(0);
@@ -188,7 +225,7 @@ describe('assembleSession (real content)', () => {
   });
 
   it('weaves the intention into the future segment, in second person', () => {
-    const s = assembleSession(planFor(20)!, segments, { voiceRate: 0.82, intention });
+    const s = assembleSession(planFor('return')!, segments, { voiceRate: 0.82, intention: { ...intention, letGo: 'I always rush.' } });
     const text = s.segments
       .find((x) => x.id === 'future')!
       .steps.map((x) => (x.kind === 'speech' ? x.text : ''))
@@ -197,11 +234,13 @@ describe('assembleSession (real content)', () => {
     expect(text).toContain('You feel joyful and free.');
     expect(text).toContain('You walk along the beach at sunrise and you feel completely alive.');
     expect(text).not.toMatch(/\{\{|\}\}|\[/);
+    const releaseText = s.segments.find((x) => x.id === 'release')!.steps.map((x) => (x.kind === 'speech' ? x.text : '')).join(' ');
+    expect(releaseText).toContain('You always rush.');
   });
 
   it('never reads markers aloud', () => {
-    for (const len of [10, 20, 45, 60]) {
-      const s = assembleSession(planFor(len)!, segments, {});
+    for (const plan of sessionPlans) {
+      const s = assembleSession(plan, segments, {});
       for (const seg of s.segments)
         for (const step of seg.steps) if (step.kind === 'speech') expect(step.text).not.toMatch(/\[|\]|\{\{/);
     }

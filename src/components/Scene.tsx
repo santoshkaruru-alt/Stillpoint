@@ -124,7 +124,7 @@ export function Scene({ kind, width: w, height: h, fadeTo, fadeLength = 0.35, an
     const stars = Array.from({ length: Math.round(w / 9) }, () => ({ x: r() * w, y: r() * h * 0.5, size: 0.5 + r() * 1.3, group: Math.floor(r() * 3) }));
     // Low in the sky, rising behind the far hills (or resting on the sea's
     // horizon), so it never sits behind headings or the breathing circle.
-    const sun = { x: w * (kind === 'sea' ? 0.88 : 0.8), y: h * (kind === 'sea' ? 0.56 : kind === 'forest' ? 0.47 : 0.5), r: Math.max(16, Math.min(34, w * 0.065)) };
+    const sun = { x: w * (kind === 'sea' ? 0.88 : 0.8), y: h * (kind === 'sea' ? 0.565 : kind === 'forest' ? 0.53 : 0.56), r: Math.max(16, Math.min(34, w * 0.065)) };
     const shimmer = Array.from({ length: 14 }, (_, i) => ({
       x: sun.x - w * 0.12 + r() * w * 0.24,
       y: horizon + 6 + i * ((h - horizon) / 16),

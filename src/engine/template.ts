@@ -48,15 +48,20 @@ function lowerLead(s: string): string {
   return s.replace(/^(A|An|The|Someone|Somebody|More|Less|Very|Deeply|Truly|Calm|Grateful|Happy|Free|Joyful)\b/, (w) => w.toLowerCase());
 }
 
+const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 /** Resolve the values that will be spoken, using defaults for empty fields. */
-export function resolveIntention(intention: Partial<Intention> | null | undefined): Intention {
+export function resolveIntention(intention: Partial<Intention> | null | undefined): Required<Intention> {
   const identity = cleanInline(intention?.identity ?? '');
   const emotion = cleanInline(intention?.emotion ?? '');
   const scene = (intention?.scene ?? '').trim();
+  const letGo = cleanInline(intention?.letGo ?? '');
   return {
     identity: identity ? lowerLead(toSecondPerson(identity)) : intentionDefaults.identity,
     emotion: emotion ? lowerLead(toSecondPerson(emotion)) : intentionDefaults.emotion,
     scene: scene ? cleanSentence(toSecondPerson(scene)) : intentionDefaults.scene,
+    // Spoken as its own sentence, so it starts with a capital.
+    letGo: letGo ? capitalise(toSecondPerson(letGo)) : intentionDefaults.letGo,
   };
 }
 
@@ -67,7 +72,7 @@ export function resolveIntention(intention: Partial<Intention> | null | undefine
 export function fillTemplate(script: string, intention: Partial<Intention> | null | undefined): string {
   const values = resolveIntention(intention);
   return script.replace(/\{\{\s*(\w+)\s*\}\}/g, (_m, key: string) => {
-    if (key === 'identity' || key === 'emotion' || key === 'scene') return values[key];
+    if (key === 'identity' || key === 'emotion' || key === 'scene' || key === 'letGo') return values[key];
     return '';
   });
 }

@@ -10,14 +10,14 @@
 // Meditation content
 // ---------------------------------------------------------------------------
 
-export type SessionLength = 10 | 20 | 45 | 60;
-export const SESSION_LENGTHS: SessionLength[] = [10, 20, 45, 60];
 
 export type SegmentId =
   | 'settle'
   | 'breath'
   | 'body'
   | 'present'
+  | 'release'
+  | 'centres'
   | 'heart'
   | 'future'
   | 'closing';
@@ -56,7 +56,9 @@ export interface SegmentContent {
 
 /** Which variant and how much of the total each segment gets per length. */
 export interface SessionPlan {
-  lengthMin: SessionLength;
+  /** Stable id used in links and history, e.g. "return". */
+  id: string;
+  lengthMin: number;
   name: string;
   description: string;
   segments: { id: SegmentId; variant: ScriptVariant; weight: number }[];
@@ -98,7 +100,8 @@ export interface Segment {
 
 export interface Session {
   id: string;
-  lengthMin: SessionLength;
+  planId: string;
+  lengthMin: number;
   name: string;
   segments: Segment[];
   totalSec: number;
@@ -112,6 +115,8 @@ export interface Intention {
   emotion: string;
   /** One future scene, felt as already happening. */
   scene: string;
+  /** An old feeling or habit the user is ready to let go of. */
+  letGo?: string;
 }
 
 // ---------------------------------------------------------------------------

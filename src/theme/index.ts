@@ -16,35 +16,36 @@ export { withAlpha } from './color';
 export type Accent = 'calm' | 'breath' | 'warm';
 
 export const fonts = {
-  serifLight: 'CormorantGaramond_300Light',
-  serif: 'CormorantGaramond_400Regular',
-  serifItalic: 'CormorantGaramond_400Regular_Italic',
-  serifMedium: 'CormorantGaramond_500Medium',
-  sans: 'Manrope_400Regular',
+  serif: 'CormorantGaramond_500Medium',
+  serifItalic: 'CormorantGaramond_500Medium_Italic',
+  serifSemi: 'CormorantGaramond_600SemiBold',
+  sans: 'Manrope_500Medium',
   sansMedium: 'Manrope_500Medium',
   sansSemi: 'Manrope_600SemiBold',
+  sansBold: 'Manrope_700Bold',
 } as const;
 
 /**
  * Type scale. Sizes follow the system text size (Dynamic Type on iOS);
- * the largest styles cap their growth so layouts hold.
+ * the largest styles cap their growth so layouts hold. Weights are kept
+ * medium or heavier: the serif's light cuts are hard to read on a phone.
  */
 export const type = {
-  display: { fontFamily: fonts.serifLight, fontSize: 44, lineHeight: 50, letterSpacing: -0.3 },
-  title: { fontFamily: fonts.serif, fontSize: 34, lineHeight: 40, letterSpacing: -0.2 },
-  heading: { fontFamily: fonts.serifMedium, fontSize: 25, lineHeight: 30 },
-  quote: { fontFamily: fonts.serifItalic, fontSize: 22, lineHeight: 31 },
+  display: { fontFamily: fonts.serif, fontSize: 44, lineHeight: 50, letterSpacing: -0.2 },
+  title: { fontFamily: fonts.serif, fontSize: 35, lineHeight: 41, letterSpacing: -0.1 },
+  heading: { fontFamily: fonts.serifSemi, fontSize: 25, lineHeight: 30 },
+  quote: { fontFamily: fonts.serifItalic, fontSize: 23, lineHeight: 32 },
   body: { fontFamily: fonts.sans, fontSize: 17, lineHeight: 26 },
-  label: { fontFamily: fonts.sansSemi, fontSize: 15, lineHeight: 20, letterSpacing: 0.3 },
-  caption: { fontFamily: fonts.sans, fontSize: 14, lineHeight: 20 },
+  label: { fontFamily: fonts.sansSemi, fontSize: 16, lineHeight: 21, letterSpacing: 0.2 },
+  caption: { fontFamily: fonts.sans, fontSize: 15, lineHeight: 21 },
   overline: {
-    fontFamily: fonts.sansSemi,
+    fontFamily: fonts.sansBold,
     fontSize: 12,
     lineHeight: 16,
-    letterSpacing: 2.4,
+    letterSpacing: 2,
     textTransform: 'uppercase',
   },
-  timer: { fontFamily: fonts.serifLight, fontSize: 80, lineHeight: 86, fontVariant: ['tabular-nums'] },
+  timer: { fontFamily: fonts.serif, fontSize: 80, lineHeight: 86, fontVariant: ['tabular-nums'] },
 } satisfies Record<string, TextStyle>;
 
 export type TypeVariant = keyof typeof type;

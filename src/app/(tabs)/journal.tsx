@@ -99,7 +99,7 @@ function Tile({ value, label, sub }: { value: string; label: string; sub: string
       <AppText variant="overline" tone="muted" style={styles.tileLabel}>
         {label}
       </AppText>
-      <AppText variant="caption" tone="faint" numberOfLines={2}>
+      <AppText variant="caption" tone="faint" numberOfLines={2} style={styles.tileSub}>
         {sub}
       </AppText>
     </View>
@@ -145,7 +145,8 @@ const useStyles = makeStyles((c) =>
   StyleSheet.create({
   header: { gap: space.xs, paddingTop: space.md, paddingBottom: 150 },
   tileValue: { color: c.warm, fontSize: 38, lineHeight: 42 },
-  tileLabel: { fontSize: 10, letterSpacing: 1.6 },
+  tileLabel: { fontSize: 10, letterSpacing: 1 },
+  tileSub: { fontSize: 13, lineHeight: 18 },
   tiles: { flexDirection: 'row', gap: space.sm },
   tile: {
     flex: 1,
